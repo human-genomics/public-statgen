@@ -358,29 +358,6 @@ The most-variable populations are mostly **admixed Levantine and American groups
 
 The Middle Eastern and American regions are the most heterogeneous, reflecting recent and ongoing admixture. The South Asian, East Asian, and African regions are tighter — particularly East and South Asian, which are dominated by relatively homogeneous 1KG populations.
 
-#### "African is the most diverse" — apparent contradiction explained
-
-A surprising-looking result: by both metrics (median and RMS distance), the **European** supervised group looks *more spread out* than the **African** supervised group, despite the well-established fact that Africans have the highest total genetic diversity of any human population. Three things resolve this:
-
-1. **PC-space distance is not total genetic diversity.** Per-individual heterozygosity (which is what's usually meant by "Africa is most diverse") is highest in Africans by a clear margin. PC-space spread is a measure of how heterogeneous a group is *along the axes the global PCA chose to prioritize* — and those axes are dominated by between-population structure (Africa vs. Out-of-Africa, West vs. East Eurasia, etc.).
-2. **Within-European structure aligns with an early PC.** PC5 (~2.7% variance) captures the FIN ↔ IBS/TSI ↔ Sardinian Steppe-vs-Anatolian cline. Our European supervised group (GBR/CEU/FIN/IBS/TSI/French) spans this cline, so it stretches along PC5 with real Euclidean distance.
-3. **Within-African structure is squashed.** The supervised African group is dominated by Bantu-expansion descendants (YRI, ESN, MSL, GWD, Mandenka), who are surprisingly homogeneous because the Bantu expansion was rapid (~3,000 years ago). The genuinely deep African outgroups (Mbuti, Biaka, San, Hadza, Sandawe) are present but undersampled — total Khoisan + Pygmy in our panel is ~40 of 483 African supervised samples. Plus, the deepest within-Africa splits (the ~150–200 kya Khoisan vs. non-Khoisan divergence) load onto later PCs because PC1 already captures Africa-vs-everyone-else.
-
-If you computed per-sample heterozygosity instead (`plink2 --het`), Africans would beat Europeans easily — the canonical "Africa is most diverse" result still holds.
-
-#### Beyond Khoisan: deep African splits
-
-Several deeply-diverged African lineages are represented in the panel:
-
-- **Central African rainforest hunter-gatherers** — Mbuti (n=11), Biaka (n=21), Baka, Aka, Bedzan (n=2 each, SGDP). Diverged from other Africans ~60–150 kya — deeper than any Out-of-Africa lineage but more recent than the Khoisan split. Eastern (Mbuti) and Western (Biaka, Baka) Pygmies are themselves substantially differentiated from each other.
-- **Hadza** (n=2, SGDP) — Tanzanian click-language foragers; possibly as deep as Khoisan in some analyses, complex non-tree structure.
-- **Sandawe** (n=2, SGDP) — Tanzanian click-language speakers; intermediate between Khoisan and East Africans.
-- **Nilo-Saharan vs Niger-Congo split** — ~30–50 kya: Nilotic groups (Dinka, Maasai, Luo, Mursi) vs. the Bantu-expansion populations.
-- **Cushitic / Omotic Ethiopians** (Aari, Agaw, Amhara, Iraqw, Somali, n=2 each) — Afroasiatic speakers in the Horn of Africa with a deep East African substrate plus ~30–50% Eurasian back-to-Africa ancestry.
-- **The "ghost" deeply-divergent African lineage** — recent papers (Lipson 2020, Durvasula & Sankararaman 2020, Schlebusch 2017) infer that West Africans carry ~5–20% ancestry from a population that diverged from the rest of modern humans **before** the Khoisan split.
-
-The bulk of the supervised African group, however, is West-African Bantu-expansion descendants (YRI, ESN, MSL, GWD, Mandenka), which genuinely cluster tightly because the expansion was so recent and rapid.
-
 ### Population Code Glossary
 
 A subset of the population codes that appear in the plots. The full panel has 183 populations across four datasets (1KG = 1000 Genomes; HGDP = Human Genome Diversity Project; SGDP = Simons Genome Diversity Project; GIAB = Genome in a Bottle).
