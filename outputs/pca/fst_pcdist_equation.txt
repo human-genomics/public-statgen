@@ -1,0 +1,52 @@
+PAIRWISE HUDSON FST  —  predictive equation from this project's PCA
+======================================================================
+
+FORMULA
+-------
+  predicted_FST  =  1.518927  ×  d²  +  -0.004587
+
+where
+  d²  =  squared Euclidean distance between the two populations'
+        geometric-median centroids in the top-20 PC space
+        (geometric median is the point minimizing the sum of
+        Euclidean distances to all members; robust to outliers,
+        following Privé et al. 2022's approach)
+
+FIT QUALITY
+-----------
+  Pearson r            : 0.9111
+  R²                   : 0.8302
+  RMSE                 : 0.02229
+  N pairs in fit       : 1906
+    population pairs   : 1891  (population n ≥ 10)
+    supervised pairs   :  15  (all 6 super-pop pairs)
+
+FST CALIBRATION (ours → literature scale)
+-----------------------------------------
+  Our unpruned Hudson FSTs were calibrated by dividing by the
+  slope of (ours_unpruned vs Privé et al. 2022) = 1.1551.
+  Reference matched on 315 pairs (Pearson r = 0.9990).
+  Reference: literature_reference/fst_prive_2022.csv
+
+PCA PROVENANCE
+--------------
+  PC scores from: pca/pca_projected.sscore  (3,640 samples × 30 PCs)
+  PCA fit panel : pca/pca_qc.{bed,bim,fam} (~125,457 LD-pruned SNPs)
+  Top 20 PCs used for centroid distance.
+
+HOW TO USE
+----------
+  Given two populations P and Q, each with a set of sample-level
+  PC scores (top 20 PCs in the same coordinate system as this
+  project's PCA):
+
+    1. centroid_P = geometric median of P-samples' top-N PC vectors
+    2. centroid_Q = geometric median of Q-samples' top-N PC vectors
+    3. d²        = sum_{i=1..N} (centroid_P[i] - centroid_Q[i])²
+    4. predicted_FST = a × d² + b   (using a, b above)
+
+  Centroids for known populations and supervised groups are saved as:
+    pca/centroids_top20_pop.tsv
+    pca/centroids_top20_supervised.tsv
+
+Generated: 2026-04-26T23:55:38

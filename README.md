@@ -54,6 +54,14 @@ You can also skip the interactive prompts by setting environment variables:
 K_MODEL=6 MAF_ADMIXTURE=0.0100 bash main.sh
 ```
 
+A separate orchestrator `pca.sh` runs principal component analysis, pairwise Hudson Fst, and PC-space variability analyses on the same merged panel:
+
+```bash
+bash pca.sh
+```
+
+This produces calibrated Fst values, a predictive Fst↔PC-distance equation, and within-group variability statistics — see [PCA + Fst Pipeline](#pca--fst-pipeline-pcash) below.
+
 ## Requirements
 
 ### Docker
@@ -295,6 +303,136 @@ The final QC-pruned SNP set at MAF 0.01 contains **135,020 SNPs** (after genotyp
 ### SNP Density Sensitivity
 
 We also tested expanding the input SNP list from the default ~500K rsID set (`rsids_dense_chr1_22.txt`) to the SBayesRC array of ~7 million SNPs. After the same QC pipeline, the denser set yielded approximately 245K post-QC SNPs — roughly 1.8x the 135K from the default list. The resulting ancestry fractions were nearly identical: differences were negligible across all populations and samples. The population structure captured by the K=6 model is fully saturated by the LD-pruned SNPs derived from the original ~500K starter list, and increasing marker density provides no meaningful improvement in ancestry resolution. The denser set did produce slightly cleaner results in specific cases — it eliminated spurious Oceanian ancestry fractions for Mbuti, reduced South Asian noise for ACB and ASW, and marginally reduced South Asian and Oceanian noise in European reference populations (FIN, CEU, GBR, IBS) — but these are minor refinements rather than substantive changes to the overall ancestry estimates.
+
+## PCA + Fst Pipeline (`pca.sh`)
+
+After the merged reference panel is produced by `main.sh`, the standalone orchestrator `pca.sh` performs a parallel set of analyses focused on principal component analysis and Wright's fixation index (Fst). It runs in 7 numbered steps with idempotent skip checks.
+
+### Pipeline Overview
+
+| Step | Script | Description |
+|------|--------|-------------|
+| 1 | `qc_pca.sh` | QC the merged panel for PCA: geno, MAF, long-range LD exclusion (Price 2008, hg38), LD pruning at window=1000/step=80/r²=0.1, three-pass kinship (AMR/non-AMR/cross-group at KING 0.088/0.05/0.088), HWE on unrelated. Produces a 3,640-sample × 125,457-SNP fileset. |
+| 2 | `compute_pca.sh` | Fit 30 PCs with `plink2 --pca allele-wts 30 --seed 0` (exact PCA, no `meanimpute`) and project all samples onto them via `plink2 --score variance-standardize`. |
+| 3 | `compute_fst.py` | Pairwise Hudson Fst between every pair of populations with n ≥ 5 + the 6 supervised reference populations (3,655 pairs). Computed on the post-MAF / post-long-range-LD / **pre-LD-prune** SNP set (~347K SNPs) for literature comparability. |
+| 4 | `correlate_fst_pca.py` | Scatter Fst against squared Euclidean distance between population centroids in PC space, for n ≥ 5/10/20 plus the 6 supervised pairs. Identifies outliers. |
+| 5 | `calibrate_and_fit_fst.py` | Calibrate Fst values against [Privé et al. 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8764121/) 1KG Phase 3 reference values, then fit a predictive equation `Fst = a · d² + b`. |
+| 6 | `within_group_variability.py` | For each population, supervised reference, and metadata superpopulation: compute the **geometric-median centroid** (Weiszfeld's algorithm, robust to outliers) and the **median + RMS Euclidean distance** of members to that centroid. |
+| 7 | (built into `pca.sh`) | Copy data files and plots to [`outputs/pca/`](outputs/pca/) for git tracking, excluding the big PLINK bfiles, raw Fst tables, and scratch directories. |
+
+Total runtime end-to-end: ~10 minutes.
+
+### Fst Calibration vs. Privé et al. 2022
+
+Our raw Hudson Fst values run **~15.5% high** relative to the [Privé et al. 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8764121/) 1KG Phase 3 reference (the slope of `ours_unpruned ~ Privé` is **1.155**, with Pearson **r = 0.999** across 315 matched 1KG pairs). The calibration step divides our Fst by 1.155 to bring our values onto the literature scale. After calibration the bias drops to −0.003 and MAE to 0.003 — see the bottom row of:
+
+![Fst calibration vs Privé et al. 2022](outputs/pca/plots/fst_calibration_vs_reference.png)
+
+The reference values are checked into [literature_reference/fst_prive_2022.csv](literature_reference/fst_prive_2022.csv).
+
+### The Fst ↔ PC-Distance Equation
+
+Across **1,891** population pairs (n ≥ 10) plus the **15** supervised-vs-supervised pairs, calibrated Fst is strikingly linear in squared Euclidean distance between geometric-median centroids in the top-20 PC space:
+
+> **predicted_Fst ≈ 1.519 · d² − 0.0046**, where d² is the sum over PC1–PC20 of squared differences between two populations' centroids.
+
+R² = 0.83, RMSE = 0.022. The equation, calibration provenance, and reuse instructions are saved in [outputs/pca/fst_pcdist_equation.txt](outputs/pca/fst_pcdist_equation.txt). Centroids for every population and supervised reference are exported to [outputs/pca/centroids_top20_pop.tsv](outputs/pca/centroids_top20_pop.tsv) and [outputs/pca/centroids_top20_supervised.tsv](outputs/pca/centroids_top20_supervised.tsv).
+
+![Fst vs PC distance, calibrated](outputs/pca/plots/fst_vs_pcdist_calibrated.png)
+
+The three highest-Fst pairs (red triangles) are all Africa × Native America: small, drifted, deeply diverged on both sides. **Karitiana ↔ Mbuti = 0.285** is the most extreme.
+
+### Within-Group PC-Space Variability
+
+For each grouping we compute the **geometric median** of members' PC scores (top-20 PCs) — following [Privé et al. 2022](https://pmc.ncbi.nlm.nih.gov/articles/PMC8764121/)'s robust-to-outliers approach — and summarize spread via **median** and **root-mean-square (RMS) Euclidean distance** to the centroid.
+
+#### Per-population (n ≥ 10), with supervised super-pops in purple:
+
+![Within-group variability, per population](outputs/pca/plots/within_group_variability_n10.png)
+
+The most-variable populations are mostly **admixed Levantine and American groups**: Bedouin and Druze (variable Levantine + sub-Saharan admixture history), American/Mozabite/MXL/PEL (post-1492 European-Native-African mixing). At the bottom-left are the homogeneous, low-drift populations (most 1KG Bantu and East Asian groups).
+
+#### Across the 10 metadata-defined regions:
+
+![Within-region variability](outputs/pca/plots/within_group_variability_metadata_superpop.png)
+
+The Middle Eastern and American regions are the most heterogeneous, reflecting recent and ongoing admixture. The South Asian, East Asian, and African regions are tighter — particularly East and South Asian, which are dominated by relatively homogeneous 1KG populations.
+
+#### "African is the most diverse" — apparent contradiction explained
+
+A surprising-looking result: by both metrics (median and RMS distance), the **European** supervised group looks *more spread out* than the **African** supervised group, despite the well-established fact that Africans have the highest total genetic diversity of any human population. Three things resolve this:
+
+1. **PC-space distance is not total genetic diversity.** Per-individual heterozygosity (which is what's usually meant by "Africa is most diverse") is highest in Africans by a clear margin. PC-space spread is a measure of how heterogeneous a group is *along the axes the global PCA chose to prioritize* — and those axes are dominated by between-population structure (Africa vs. Out-of-Africa, West vs. East Eurasia, etc.).
+2. **Within-European structure aligns with an early PC.** PC5 (~2.7% variance) captures the FIN ↔ IBS/TSI ↔ Sardinian Steppe-vs-Anatolian cline. Our European supervised group (GBR/CEU/FIN/IBS/TSI/French) spans this cline, so it stretches along PC5 with real Euclidean distance.
+3. **Within-African structure is squashed.** The supervised African group is dominated by Bantu-expansion descendants (YRI, ESN, MSL, GWD, Mandenka), who are surprisingly homogeneous because the Bantu expansion was rapid (~3,000 years ago). The genuinely deep African outgroups (Mbuti, Biaka, San, Hadza, Sandawe) are present but undersampled — total Khoisan + Pygmy in our panel is ~40 of 483 African supervised samples. Plus, the deepest within-Africa splits (the ~150–200 kya Khoisan vs. non-Khoisan divergence) load onto later PCs because PC1 already captures Africa-vs-everyone-else.
+
+If you computed per-sample heterozygosity instead (`plink2 --het`), Africans would beat Europeans easily — the canonical "Africa is most diverse" result still holds.
+
+#### Beyond Khoisan: deep African splits
+
+Several deeply-diverged African lineages are represented in the panel:
+
+- **Central African rainforest hunter-gatherers** — Mbuti (n=11), Biaka (n=21), Baka, Aka, Bedzan (n=2 each, SGDP). Diverged from other Africans ~60–150 kya — deeper than any Out-of-Africa lineage but more recent than the Khoisan split. Eastern (Mbuti) and Western (Biaka, Baka) Pygmies are themselves substantially differentiated from each other.
+- **Hadza** (n=2, SGDP) — Tanzanian click-language foragers; possibly as deep as Khoisan in some analyses, complex non-tree structure.
+- **Sandawe** (n=2, SGDP) — Tanzanian click-language speakers; intermediate between Khoisan and East Africans.
+- **Nilo-Saharan vs Niger-Congo split** — ~30–50 kya: Nilotic groups (Dinka, Maasai, Luo, Mursi) vs. the Bantu-expansion populations.
+- **Cushitic / Omotic Ethiopians** (Aari, Agaw, Amhara, Iraqw, Somali, n=2 each) — Afroasiatic speakers in the Horn of Africa with a deep East African substrate plus ~30–50% Eurasian back-to-Africa ancestry.
+- **The "ghost" deeply-divergent African lineage** — recent papers (Lipson 2020, Durvasula & Sankararaman 2020, Schlebusch 2017) infer that West Africans carry ~5–20% ancestry from a population that diverged from the rest of modern humans **before** the Khoisan split.
+
+The bulk of the supervised African group, however, is West-African Bantu-expansion descendants (YRI, ESN, MSL, GWD, Mandenka), which genuinely cluster tightly because the expansion was so recent and rapid.
+
+### Population Code Glossary
+
+A subset of the population codes that appear in the plots. The full panel has 183 populations across four datasets (1KG = 1000 Genomes; HGDP = Human Genome Diversity Project; SGDP = Simons Genome Diversity Project; GIAB = Genome in a Bottle).
+
+| Code | Population | Notes |
+|------|------------|-------|
+| **YRI** | Yoruba in Ibadan, Nigeria (1KG) | West African Niger-Congo speakers; the canonical "African" reference in many studies |
+| **ESN** | Esan in Nigeria (1KG) | West African; very close to YRI (Fst < 0.001) |
+| **MSL** | Mende in Sierra Leone (1KG) | West African |
+| **GWD** | Gambian Mandinka (1KG) | West African |
+| **LWK** | Luhya in Webuye, Kenya (1KG) | East African Bantu speakers; the only East-African 1KG group |
+| **ASW** | African Ancestry in Southwest USA (1KG, n=55) | African-American: predominantly West African with ~15–25% European admixture |
+| **ACB** | African Caribbean in Barbados (1KG, n=95) | West-African-derived Caribbean; less admixed than ASW |
+| **CEU** | Utah residents (CEPH) of Northern/Western European ancestry (1KG) | The canonical "European" reference |
+| **GBR** | British in England and Scotland (1KG) | NW European |
+| **FIN** | Finnish in Finland (1KG) | NE European; high Steppe ancestry, founder effect |
+| **IBS** | Iberian populations in Spain (1KG) | SW European |
+| **TSI** | Toscani in Italy (1KG) | South European |
+| **GIH / ITU / STU** | Gujarati / Indian Telugu / Sri Lankan Tamil (1KG) | South Asian; the only 1KG South Asian populations |
+| **PJL / BEB** | Punjabi / Bengali (1KG) | South Asian — added in 1KG Phase 3 |
+| **JPT / CHB / CHS / CDX / KHV** | Japanese / Han Chinese (Beijing) / Han Chinese South / Dai Chinese / Vietnamese | East Asian 1KG populations |
+| **MXL** | Mexican Ancestry from Los Angeles (1KG) | Heavily admixed: European + indigenous American + some African |
+| **PEL** | Peruvian from Lima (1KG) | High indigenous American admixture (~70%+) |
+| **CLM** | Colombian from Medellin (1KG) | Admixed: European + American + African |
+| **PUR** | Puerto Rican (1KG) | Heavily admixed Caribbean: European + African + American |
+| **Karitiana** | Indigenous Amazonian Brazil (HGDP, n=10) | Small isolated population, near-zero non-Native ancestry, very high pairwise Fst due to drift |
+| **Surui** | Indigenous Amazonian Brazil (HGDP, n=5) | Even higher drift than Karitiana |
+| **Maya / Pima** | Indigenous American (HGDP) | Mexico/Mesoamerica |
+| **Bedouin** | Bedouin Arabs (HGDP, n=46) | Negev/Levantine Arabic-speaking pastoralists; varying sub-Saharan admixture from trans-Saharan trade history → high within-group variability |
+| **Druze** | Druze religious community (Lebanon/Syria/Israel, HGDP, n=40) | Endogamous community; genetically distinctive due to long-term isolation |
+| **Mozabite** | Berber-speakers (M'zab Valley, Algeria, HGDP, n=27) | The standard North African Berber reference |
+| **Sardinian** | Sardinian Italian (HGDP, n=28) | European isolate; retains the highest fraction of ancient Anatolian-farmer ancestry in Europe |
+| **Basque** | Basque (HGDP, n=23) | European isolate; another ancient-farmer-rich population |
+| **Mbuti / Biaka** | Central African rainforest hunter-gatherers (HGDP, n=11 / n=21) | Two of the deepest African lineages outside Khoisan; the "Pygmy" populations |
+| **San** | Khoisan-speaking (Southern Africa, HGDP, n=6) | Deepest known split in human ancestry (~150–200 kya from non-Khoisan) |
+| **Hadza / Sandawe** | Tanzanian click-language speakers (SGDP, n=2 each) | Deeply divergent East African lineages |
+| **Kalash** | Pakistani Hindu Kush isolate (HGDP, n=21) | Famously distinct: their unique allele frequencies create an outlier signal in PC space (high PC distance but moderate Fst) |
+| **HG003 / HG004** | GIAB Ashkenazi Jewish father / mother (n=1 each) | Reference benchmark trio parents; included in the panel for ancestry projection |
+
+### Output Files
+
+The PCA pipeline's data outputs are in [`outputs/pca/`](outputs/pca/):
+
+- [centroids_top20_pop.tsv](outputs/pca/centroids_top20_pop.tsv) — geometric-median centroid + sample size for each of 183 populations (PC1–PC20)
+- [centroids_top20_supervised.tsv](outputs/pca/centroids_top20_supervised.tsv) — same for the 6 supervised reference populations
+- [within_group_stats_pop.tsv](outputs/pca/within_group_stats_pop.tsv), [within_group_stats_supervised.tsv](outputs/pca/within_group_stats_supervised.tsv), [within_group_stats_metadata_superpop.tsv](outputs/pca/within_group_stats_metadata_superpop.tsv) — median + RMS distance to centroid for each grouping
+- [fst_pcdist_equation.txt](outputs/pca/fst_pcdist_equation.txt) — the predictive equation, calibration metadata, and reuse instructions
+- [pca_pcs.eigenval](outputs/pca/pca_pcs.eigenval), [pca_pcs.eigenvec](outputs/pca/pca_pcs.eigenvec), [pca_pcs.eigenvec.allele](outputs/pca/pca_pcs.eigenvec.allele) — PCA fit primitives
+- [pca_projected.sscore](outputs/pca/pca_projected.sscore), [pca_counts.acount](outputs/pca/pca_counts.acount) — projection outputs
+- [plots/](outputs/pca/plots/) — all 10 plots: 1 calibration-vs-reference, 5 Fst-vs-PC-distance (n≥5/10/20, supervised, calibrated), 4 within-group variability (n≥5/10/20, metadata superpop)
+
+The pairwise Fst tables (`pca/fst_pairs/fst_summary.tsv`, `fst_summary_calibrated.tsv`, `fst_matrix.tsv`) live under `pca/fst_pairs/` but are not committed since they're easily regenerated and somewhat large.
 
 ## Keywords
 
