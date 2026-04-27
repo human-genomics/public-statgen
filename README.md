@@ -242,6 +242,7 @@ The `literature_reference/` directory contains sample-level information extracte
 | `other_spanish_outliers.txt` | Additional Spanish-ancestry outlier samples |
 | `american_admixed_outliers.txt` | American reference samples excluded due to admixture |
 | `oceanian_admixed_outliers.txt` | Oceanian reference samples excluded due to admixture |
+| `fst_prive_2022.csv` | Pairwise Hudson Fst values for 26 1000 Genomes Phase 3 populations (315 pairs); used to calibrate this project's Fst values onto the published scale |
 
 ### Publications
 
@@ -256,6 +257,8 @@ The `literature_reference/` directory contains sample-level information extracte
 - **Dominguez Mantes et al.** — *Neural ADMIXTURE for rapid genomic clustering.* Nature Computational Science (2023). [doi:10.1038/s43588-023-00482-7](https://doi.org/10.1038/s43588-023-00482-7)
 
 - **Zook et al.** — *An open resource for accurately benchmarking small variant and reference calls.* Nature Biotechnology (2019). [doi:10.1038/s41587-019-0074-6](https://doi.org/10.1038/s41587-019-0074-6)
+
+- **Privé et al.** — *Portability of 245 polygenic scores when derived from the UK Biobank and applied to 9 ancestry groups from the same cohort.* The American Journal of Human Genetics (2022). [doi:10.1016/j.ajhg.2021.11.008](https://doi.org/10.1016/j.ajhg.2021.11.008) — source of the 1KG Phase 3 pairwise Fst reference values used for calibration in `pca.sh`, and of the geometric-median centroid + Fst↔PC-distance methodology.
 
 ## ADMIXTURE Results (K=6)
 
