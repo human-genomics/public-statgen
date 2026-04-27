@@ -12,7 +12,11 @@
 set -euo pipefail
 
 PLINK1_DATE="20250819"
-PLINK2_DATE="20260311"
+PLINK2_DATE="20260425"
+# PLINK 2.0 binaries live under a versioned prefix on S3 (currently alpha7).
+# Older direct-path URLs are deleted when new builds are released, so we use
+# the prefixed path to match the cog-genomics.org/plink/2.0 download links.
+PLINK2_PREFIX="alpha7"
 
 TOOLS_DIR="$(cd "$(dirname "$0")" && pwd)/tools"
 BIN_DIR="${TOOLS_DIR}/bin"
@@ -33,9 +37,9 @@ case "${OS}" in
 esac
 
 case "${OS}-${ARCH}" in
-    Darwin-arm64)   PLINK2_URL="https://s3.amazonaws.com/plink2-assets/plink2_mac_arm64_${PLINK2_DATE}.zip" ;;
-    Darwin-x86_64)  PLINK2_URL="https://s3.amazonaws.com/plink2-assets/plink2_mac_avx2_${PLINK2_DATE}.zip" ;;
-    Linux-x86_64)   PLINK2_URL="https://s3.amazonaws.com/plink2-assets/plink2_linux_x86_64_${PLINK2_DATE}.zip" ;;
+    Darwin-arm64)   PLINK2_URL="https://s3.amazonaws.com/plink2-assets/${PLINK2_PREFIX}/plink2_mac_arm64_${PLINK2_DATE}.zip" ;;
+    Darwin-x86_64)  PLINK2_URL="https://s3.amazonaws.com/plink2-assets/${PLINK2_PREFIX}/plink2_mac_avx2_${PLINK2_DATE}.zip" ;;
+    Linux-x86_64)   PLINK2_URL="https://s3.amazonaws.com/plink2-assets/${PLINK2_PREFIX}/plink2_linux_x86_64_${PLINK2_DATE}.zip" ;;
     Linux-aarch64)
         echo "Error: PLINK 2.0 does not provide a Linux aarch64 binary." >&2
         echo "See https://www.cog-genomics.org/plink/2.0/ for available builds." >&2
