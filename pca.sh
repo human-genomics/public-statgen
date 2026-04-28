@@ -15,7 +15,6 @@
 #   4. Correlate FST vs squared Euclidean distance between PC centroids
 #   5. Calibrate FST against Privé et al. 2022 and fit FST = a·d² + b
 #   6. Within-group PC-space variability  (median + RMS distance to centroid)
-#   7. Publish data files and plots to outputs/pca/  (tracked, for git commits)
 #
 set -euo pipefail
 
@@ -189,36 +188,6 @@ if [[ -f "${PCA_DIR}/within_group_stats_pop.tsv" \
 else
     "${PYTHON}" "${PROJECT_DIR}/within_group_variability.py"
 fi
-echo ""
-
-# ---------------------------------------------------------------------------
-# Step 7 — Publish data files and plots to tracked outputs/pca/
-# ---------------------------------------------------------------------------
-# pca/ is gitignored (large derived artifacts). Copy everything except the
-# big PLINK bfiles (.bed/.bim/.fam), the fst_pairs/ subdirectory, and the
-# scrap/ subdirectory.
-#
-# Uses cp -n (no-clobber) so an existing outputs/pca/ — which is the
-# canonical published copy in the repo — is never overwritten by a re-run.
-# To refresh outputs/pca/ deliberately, delete the target file first.
-echo "============================================"
-echo "Step 7: Copy data files and plots to outputs/pca/"
-echo "============================================"
-
-OUTPUTS_PCA="${PROJECT_DIR}/outputs/pca"
-mkdir -p "${OUTPUTS_PCA}/plots"
-
-# Top-level files: skip *.bed *.bim *.fam *.log
-find "${PCA_DIR}" -maxdepth 1 -type f \
-    ! -name '*.bed' ! -name '*.bim' ! -name '*.fam' ! -name '*.log' \
-    -exec cp -n {} "${OUTPUTS_PCA}/" \;
-
-# Plots
-cp -n "${PCA_DIR}/plots/"*.png "${OUTPUTS_PCA}/plots/"
-
-N_FILES=$(find "${OUTPUTS_PCA}" -maxdepth 1 -type f | wc -l | tr -d ' ')
-N_PLOTS=$(find "${OUTPUTS_PCA}/plots" -maxdepth 1 -type f | wc -l | tr -d ' ')
-echo "  outputs/pca/ now has ${N_FILES} top-level files + ${N_PLOTS} plots (existing files preserved)"
 echo ""
 
 echo "============================================"
