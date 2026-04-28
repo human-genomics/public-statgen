@@ -1,0 +1,1778 @@
+============================================
+Pipeline Run — Mon Apr 27 02:44:13 PM EDT 2026
+============================================
+  K_MODEL=6
+  MAF_ADMIXTURE=0.0100
+  GENO_ADMIXTURE=0.01
+  HWE_PVALUE=1e-50
+  LD_WINDOW=50, LD_STEP=10, LD_R2=0.1
+  MIND_ADMIXTURE=0.01
+  KING_CUTOFF_AMR=0.088
+  KING_CUTOFF_NONAMR=0.05
+  N_FOLDS=3, ADMIXTURE_SEED=42
+  LOG_FILE=/home/jesse/projects/sandboxes/ps-add-log/logs/main_run_20260427_144413.log
+
+============================================
+Step 1: Install PLINK and liftOver
+============================================
+==> Installing PLINK binaries ...
+  [download] plink1 ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  1 6173k    1 69228    0     0   279k      0  0:00:22 --:--:--  0:00:22  279k100 6173k  100 6173k    0     0  13.6M      0 --:--:-- --:--:-- --:--:-- 13.6M
+  [installed] /home/jesse/projects/sandboxes/ps-add-log/tools/bin/plink1
+  [download] plink2 ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 7440k  100 7440k    0     0  16.5M      0 --:--:-- --:--:-- --:--:-- 16.5M
+  [installed] /home/jesse/projects/sandboxes/ps-add-log/tools/bin/plink2
+==> PLINK setup complete. Binaries in /home/jesse/projects/sandboxes/ps-add-log/tools/bin/
+  [download] liftOver ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0 23.6M    0  101k    0     0  97282      0  0:04:14  0:00:01  0:04:13 97217 15 23.6M   15 3695k    0     0  1791k      0  0:00:13  0:00:02  0:00:11 1791k 30 23.6M   30 7273k    0     0  2389k      0  0:00:10  0:00:03  0:00:07 2389k 45 23.6M   45 10.8M    0     0  2745k      0  0:00:08  0:00:04  0:00:04 2744k 61 23.6M   61 14.5M    0     0  2943k      0  0:00:08  0:00:05  0:00:03 2967k 76 23.6M   76 18.0M    0     0  3056k      0  0:00:07  0:00:06  0:00:01 3693k 91 23.6M   91 21.7M    0     0  3153k      0  0:00:07  0:00:07 --:--:-- 3716k100 23.6M  100 23.6M    0     0  3206k      0  0:00:07  0:00:07 --:--:-- 3759k
+  [installed] /home/jesse/projects/sandboxes/ps-add-log/tools/bin/liftOver
+
+============================================
+Step 2: Download KG, HGDP, SGDP, Neural ADMIXTURE, GIAB, and population data
+============================================
+==> Downloading 1000 Genomes (KG) data ...
+  [download] kg_all.pgen.zst
+  [download] kg_all.pvar.zst
+  [download] kg_all.psam
+  [verified] kg_all.psam
+  [download] deg2_hg38.king.cutoff.out.id
+  [verified] deg2_hg38.king.cutoff.out.id
+==> Downloading HGDP data ...
+  [download] hgdp_all.pgen.zst
+  [download] hgdp_all.pvar.zst
+  [download] hgdp_all.psam
+  [verified] hgdp_all.psam
+==> Downloading SGDP data ...
+  [download] sgdp_all.bim.zip
+  [verified] sgdp_all.bim.zip
+  [download] sgdp_all.bed
+  [download] sgdp_all.fam
+  [verified] sgdp_all.fam
+  [download] sgdp_metadata.txt
+  [verified] sgdp_metadata.txt
+==> Downloading hg19 → hg38 chain file ...
+  [download] hg19ToHg38.over.chain.gz
+==> Downloading Neural ADMIXTURE data ...
+  [download] Neural ADMIXTURE data.tar.gz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0  249M    0 62315    0     0  43129      0  1:41:06  0:00:01  1:41:05 43129  1  249M    1 2818k    0     0  1157k      0  0:03:40  0:00:02  0:03:38 2787k  2  249M    2 5890k    0     0  1720k      0  0:02:28  0:00:03  0:02:25 2947k  3  249M    3 8946k    0     0  2027k      0  0:02:06  0:00:04  0:02:02 2993k  4  249M    4 11.7M    0     0  2225k      0  0:01:54  0:00:05  0:01:49 3021k  5  249M    5 14.7M    0     0  2361k      0  0:01:48  0:00:06  0:01:42 3039k  7  249M    7 17.7M    0     0  2461k      0  0:01:43  0:00:07  0:01:36 3102k  8  249M    8 20.7M    0     0  2536k      0  0:01:40  0:00:08  0:01:32 3100k  9  249M    9 23.7M    0     0  2600k      0  0:01:38  0:00:09  0:01:29 3110k 10  249M   10 26.9M    0     0  2648k      0  0:01:36  0:00:10  0:01:26 3103k 12  249M   12 29.9M    0     0  2686k      0  0:01:35  0:00:11  0:01:24 3099k 13  249M   13 32.9M    0     0  2720k      0  0:01:33  0:00:12  0:01:21 3100k 14  249M   14 35.9M    0     0  2748k      0  0:01:32  0:00:13  0:01:19 3102k 15  249M   15 38.9M    0     0  2773k      0  0:01:32  0:00:14  0:01:18 3096k 16  249M   16 41.9M    0     0  2793k      0  0:01:31  0:00:15  0:01:16 3099k 18  249M   18 44.9M    0     0  2812k      0  0:01:30  0:00:16  0:01:14 3101k 19  249M   19 47.9M    0     0  2827k      0  0:01:30  0:00:17  0:01:13 3096k 20  249M   20 51.0M    0     0  2842k      0  0:01:29  0:00:18  0:01:11 3095k 21  249M   21 54.0M    0     0  2858k      0  0:01:29  0:00:19  0:01:10 3106k 22  249M   22 57.1M    0     0  2870k      0  0:01:29  0:00:20  0:01:09 3105k 24  249M   24 60.1M    0     0  2880k      0  0:01:28  0:00:21  0:01:07 3104k 25  249M   25 63.1M    0     0  2890k      0  0:01:28  0:00:22  0:01:06 3107k 26  249M   26 66.1M    0     0  2898k      0  0:01:28  0:00:23  0:01:05 3104k 27  249M   27 69.1M    0     0  2907k      0  0:01:27  0:00:24  0:01:03 3094k 28  249M   28 72.1M    0     0  2913k      0  0:01:27  0:00:25  0:01:02 3091k 30  249M   30 75.2M    0     0  2920k      0  0:01:27  0:00:26  0:01:01 3093k 31  249M   31 78.2M    0     0  2927k      0  0:01:27  0:00:27  0:01:00 3093k 32  249M   32 81.2M    0     0  2934k      0  0:01:27  0:00:28  0:00:59 3100k 33  249M   33 84.3M    0     0  2940k      0  0:01:26  0:00:29  0:00:57 3104k 35  249M   35 87.3M    0     0  2945k      0  0:01:26  0:00:30  0:00:56 3109k 36  249M   36 90.3M    0     0  2950k      0  0:01:26  0:00:31  0:00:55 3107k 37  249M   37 93.3M    0     0  2954k      0  0:01:26  0:00:32  0:00:54 3100k 38  249M   38 96.4M    0     0  2958k      0  0:01:26  0:00:33  0:00:53 3097k 39  249M   39 99.4M    0     0  2963k      0  0:01:26  0:00:34  0:00:52 3092k 41  249M   41  102M    0     0  2966k      0  0:01:26  0:00:35  0:00:51 3091k 42  249M   42  105M    0     0  2971k      0  0:01:25  0:00:36  0:00:49 3103k 43  249M   43  108M    0     0  2975k      0  0:01:25  0:00:37  0:00:48 3113k 44  249M   44  111M    0     0  2978k      0  0:01:25  0:00:38  0:00:47 3106k 45  249M   45  114M    0     0  2980k      0  0:01:25  0:00:39  0:00:46 3103k 47  249M   47  117M    0     0  2983k      0  0:01:25  0:00:40  0:00:45 3103k 48  249M   48  120M    0     0  2986k      0  0:01:25  0:00:41  0:00:44 3094k 49  249M   49  123M    0     0  2988k      0  0:01:25  0:00:42  0:00:43 3088k 50  249M   50  126M    0     0  2991k      0  0:01:25  0:00:43  0:00:42 3093k 51  249M   51  129M    0     0  2993k      0  0:01:25  0:00:44  0:00:41 3095k 53  249M   53  132M    0     0  2997k      0  0:01:25  0:00:45  0:00:40 3108k 54  249M   54  135M    0     0  2999k      0  0:01:25  0:00:46  0:00:39 3105k 55  249M   55  138M    0     0  3001k      0  0:01:25  0:00:47  0:00:38 3106k 56  249M   56  141M    0     0  3003k      0  0:01:25  0:00:48  0:00:37 3105k 58  249M   58  144M    0     0  3004k      0  0:01:25  0:00:49  0:00:36 3104k 59  249M   59  147M    0     0  3006k      0  0:01:24  0:00:50  0:00:34 3094k 60  249M   60  150M    0     0  3008k      0  0:01:24  0:00:51  0:00:33 3094k 61  249M   61  153M    0     0  3010k      0  0:01:24  0:00:52  0:00:32 3095k 62  249M   62  157M    0     0  3012k      0  0:01:24  0:00:53  0:00:31 3098k 64  249M   64  160M    0     0  3014k      0  0:01:24  0:00:54  0:00:30 3104k 65  249M   65  163M    0     0  3015k      0  0:01:24  0:00:55  0:00:29 3103k 66  249M   66  166M    0     0  3016k      0  0:01:24  0:00:56  0:00:28 3104k 67  249M   67  169M    0     0  3018k      0  0:01:24  0:00:57  0:00:27 3103k 68  249M   68  172M    0     0  3019k      0  0:01:24  0:00:58  0:00:26 3098k 70  249M   70  175M    0     0  3020k      0  0:01:24  0:00:59  0:00:25 3091k 71  249M   71  178M    0     0  3022k      0  0:01:24  0:01:00  0:00:24 3094k 72  249M   72  181M    0     0  3023k      0  0:01:24  0:01:01  0:00:23 3097k 73  249M   73  184M    0     0  3025k      0  0:01:24  0:01:02  0:00:22 3101k 75  249M   75  187M    0     0  3026k      0  0:01:24  0:01:03  0:00:21 3104k 76  249M   76  190M    0     0  3027k      0  0:01:24  0:01:04  0:00:20 3105k 77  249M   77  193M    0     0  3028k      0  0:01:24  0:01:05  0:00:19 3104k 78  249M   78  196M    0     0  3029k      0  0:01:24  0:01:06  0:00:18 3103k 79  249M   79  199M    0     0  3030k      0  0:01:24  0:01:07  0:00:17 3095k 81  249M   81  202M    0     0  3031k      0  0:01:24  0:01:08  0:00:16 3093k 82  249M   82  205M    0     0  3032k      0  0:01:24  0:01:09  0:00:15 3097k 83  249M   83  208M    0     0  3033k      0  0:01:24  0:01:10  0:00:14 3094k 84  249M   84  211M    0     0  3034k      0  0:01:24  0:01:11  0:00:13 3094k 85  249M   85  214M    0     0  3035k      0  0:01:24  0:01:12  0:00:12 3104k 87  249M   87  217M    0     0  3036k      0  0:01:24  0:01:13  0:00:11 3105k 88  249M   88  220M    0     0  3037k      0  0:01:24  0:01:14  0:00:10 3104k 89  249M   89  223M    0     0  3037k      0  0:01:24  0:01:15  0:00:09 3102k 90  249M   90  226M    0     0  3038k      0  0:01:24  0:01:16  0:00:08 3097k 92  249M   92  229M    0     0  3038k      0  0:01:24  0:01:17  0:00:07 3089k 93  249M   93  232M    0     0  3039k      0  0:01:24  0:01:18  0:00:06 3092k 94  249M   94  235M    0     0  3040k      0  0:01:24  0:01:19  0:00:05 3090k 95  249M   95  238M    0     0  3041k      0  0:01:24  0:01:20  0:00:04 3098k 96  249M   96  241M    0     0  3042k      0  0:01:23  0:01:21  0:00:02 3107k 98  249M   98  244M    0     0  3043k      0  0:01:23  0:01:22  0:00:01 3109k 99  249M   99  247M    0     0  3043k      0  0:01:23  0:01:23 --:--:-- 3105k100  249M  100  249M    0     0  3044k      0  0:01:23  0:01:23 --:--:-- 3109k
+==> Downloading GIAB Ashkenazi parent data ...
+  [download] HG003_GRCh38_1_22_v4.2.1_benchmark.vcf.gz
+  [download] HG003_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed
+  [verified] HG003_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed
+  [download] HG004_GRCh38_1_22_v4.2.1_benchmark.vcf.gz
+  [download] HG004_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed
+  [verified] HG004_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed
+==> Downloading 1000 Genomes population descriptions ...
+  [download] kg_population_names.tsv
+  [verified] kg_population_names.tsv
+==> Downloading high-LD regions ...
+  [download] high_ld_regions_hg38.bed
+  [verified] high_ld_regions_hg38.bed
+==> Downloads complete.
+
+============================================
+Step 3: QC KG and HGDP data
+============================================
+  Decompressing KG pfiles ...
+  Decompressing HGDP pfiles ...
+  QC filtering KG (removing related individuals) → bed ...
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/qc/kg_qc.log.
+Options in effect:
+  --allow-extra-chr
+  --chr 1-22
+  --extract /home/jesse/projects/sandboxes/ps-add-log/rsids_dense_chr1_22.txt
+  --make-bed
+  --max-alleles 2
+  --memory 14000
+  --out /home/jesse/projects/sandboxes/ps-add-log/qc/kg_qc
+  --pfile /home/jesse/projects/sandboxes/ps-add-log/qc/kg_all
+  --remove /home/jesse/projects/sandboxes/ps-add-log/downloads/deg2_hg38.king.cutoff.out.id
+  --set-missing-var-ids @_#_$1_$2
+  --threads 6
+
+Start time: Mon Apr 27 14:53:20 2026
+515579 MiB RAM detected, ~496658 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+3202 samples (1603 females, 1598 males, 1 ambiguous; 2583 founders) loaded from
+/home/jesse/projects/sandboxes/ps-add-log/qc/kg_all.psam.
+Note: 2585 nonstandard chromosome codes present.
+75193455 variants in /home/jesse/projects/sandboxes/ps-add-log/qc/kg_all.pvar;
+4501440 excluded by --chr + --max-alleles, 70692015 remaining.
+2 categorical phenotypes loaded.
+--extract: 501477 variants remaining.
+--remove: 2573 samples remaining.
+2573 samples (1296 females, 1276 males, 1 ambiguous; 2561 founders) remaining
+after main filters.
+501477 variants remaining after main filters.
+Writing /home/jesse/projects/sandboxes/ps-add-log/qc/kg_qc.fam ... done.
+Writing /home/jesse/projects/sandboxes/ps-add-log/qc/kg_qc.bim ... done.
+Writing /home/jesse/projects/sandboxes/ps-add-log/qc/kg_qc.bed ... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+End time: Mon Apr 27 14:53:47 2026
+  QC filtering HGDP → bed ...
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/qc/hgdp_qc.log.
+Options in effect:
+  --allow-extra-chr
+  --chr 1-22
+  --extract /home/jesse/projects/sandboxes/ps-add-log/rsids_dense_chr1_22.txt
+  --make-bed
+  --max-alleles 2
+  --memory 14000
+  --out /home/jesse/projects/sandboxes/ps-add-log/qc/hgdp_qc
+  --pfile /home/jesse/projects/sandboxes/ps-add-log/qc/hgdp_all
+  --set-missing-var-ids @_#_$1_$2
+  --threads 6
+
+Start time: Mon Apr 27 14:53:48 2026
+515579 MiB RAM detected, ~496196 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+Warning: Phenotype value in [-8, -9) or (-9, -10] present, when -9 is treated
+as missing.  Use --no-input-missing-phenotype to treat -9 as a numeric value
+(missing values can be indicated by 'NA'), or --neg9-pheno-really-missing to
+suppress this warning.
+929 samples (317 females, 612 males; 929 founders) loaded from
+/home/jesse/projects/sandboxes/ps-add-log/qc/hgdp_all.psam.
+64946303 variants in
+/home/jesse/projects/sandboxes/ps-add-log/qc/hgdp_all.pvar; 780445 excluded by
+--chr + --max-alleles, 64165858 remaining.
+4 phenotypes loaded (2 quantitative, 2 categorical).
+--extract: 497228 variants remaining.
+497228 variants remaining after main filters.
+Writing /home/jesse/projects/sandboxes/ps-add-log/qc/hgdp_qc.fam ... done.
+Writing /home/jesse/projects/sandboxes/ps-add-log/qc/hgdp_qc.bim ... done.
+Writing /home/jesse/projects/sandboxes/ps-add-log/qc/hgdp_qc.bed ... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+End time: Mon Apr 27 14:53:56 2026
+  Cleaning up intermediate files ...
+  QC complete.
+
+============================================
+Step 4: Set up Python environment
+============================================
+  [create] Python venv at /home/jesse/projects/sandboxes/ps-add-log/tools/venv ...
+  [install] Python dependencies from requirements.txt ...
+==> Python setup complete.
+
+============================================
+Step 5: QC SGDP data
+============================================
+Reading liftover chains
+Mapping coordinates
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/qc/sgdp_qc.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/qc/sgdp_all
+  --extract /home/jesse/projects/sandboxes/ps-add-log/qc/sgdp_select_ids.txt
+  --make-bed
+  --memory 14000
+  --out /home/jesse/projects/sandboxes/ps-add-log/qc/sgdp_qc
+  --threads 6
+
+Start time: Mon Apr 27 14:57:09 2026
+515579 MiB RAM detected, ~485440 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+345 samples (129 females, 179 males, 37 ambiguous; 345 founders) loaded from
+/home/jesse/projects/sandboxes/ps-add-log/qc/sgdp_all.fam.
+34418131 variants loaded from
+/home/jesse/projects/sandboxes/ps-add-log/qc/sgdp_all.bim.
+1 binary phenotype loaded (0 cases, 345 controls).
+--extract: 457661 variants remaining.
+457661 variants remaining after main filters.
+Writing /home/jesse/projects/sandboxes/ps-add-log/qc/sgdp_qc.fam ... done.
+Writing /home/jesse/projects/sandboxes/ps-add-log/qc/sgdp_qc.bim ... done.
+Writing /home/jesse/projects/sandboxes/ps-add-log/qc/sgdp_qc.bed ... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+End time: Mon Apr 27 14:57:13 2026
+  Reading SGDP bim and lifting hg19 → hg38 ...
+  Matching SGDP variants to KG by (chrom, pos, alleles) ...
+  Matched 457,661 variants
+  Extracting matched variants with PLINK2 ...
+  Updating sgdp_qc.bim with hg38 positions and rsIDs ...
+  SGDP QC complete.
+
+============================================
+Step 6: Merge KG + HGDP + SGDP
+============================================
+  1/5 Aligning SGDP alleles to KG ...
+PLINK v1.9.0-b.7.11 64-bit (19 Aug 2025)           cog-genomics.org/plink/1.9/
+(C) 2005-2025 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_aligned.log.
+Options in effect:
+  --a1-allele /home/jesse/projects/sandboxes/ps-add-log/merge/kg_a1_ref.txt 2 1
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/qc/sgdp_qc
+  --make-bed
+  --memory 14000
+  --out /home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_aligned
+  --threads 6
+
+515579 MB RAM detected; reserving 14000 MB for main workspace.
+457661 variants loaded from .bim file.
+345 people (179 males, 129 females, 37 ambiguous) loaded from .fam.
+Ambiguous sex IDs written to
+/home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_aligned.nosex .
+345 phenotype values loaded from .fam.
+Warning: Ignoring phenotypes of missing-sex samples.  If you don't want those
+phenotypes to be ignored, use the --allow-no-sex flag.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 345 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is 0.998573.
+--a1-allele: 457661 assignments made.
+457661 variants and 345 people pass filters and QC.
+Among remaining phenotypes, 0 are cases and 345 are controls.
+--make-bed to /home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_aligned.bed
++ /home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_aligned.bim +
+/home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_aligned.fam ... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+  2/5 Merging KG + HGDP ...
+PLINK v1.9.0-b.7.11 64-bit (19 Aug 2025)           cog-genomics.org/plink/1.9/
+(C) 2005-2025 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/merge/temp_merge1.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/qc/kg_qc
+  --bmerge /home/jesse/projects/sandboxes/ps-add-log/qc/hgdp_qc.bed /home/jesse/projects/sandboxes/ps-add-log/qc/hgdp_qc.bim /home/jesse/projects/sandboxes/ps-add-log/qc/hgdp_qc.fam
+  --extract /home/jesse/projects/sandboxes/ps-add-log/merge/common_kg_hgdp.txt
+  --make-bed
+  --memory 14000
+  --out /home/jesse/projects/sandboxes/ps-add-log/merge/temp_merge1
+  --threads 6
+
+515579 MB RAM detected; reserving 14000 MB for main workspace.
+2573 people loaded from /home/jesse/projects/sandboxes/ps-add-log/qc/kg_qc.fam.
+929 people to be merged from
+/home/jesse/projects/sandboxes/ps-add-log/qc/hgdp_qc.fam.
+Of these, 929 are new, while 0 are present in the base dataset.
+501477 markers loaded from
+/home/jesse/projects/sandboxes/ps-add-log/qc/kg_qc.bim.
+497228 markers to be merged from
+/home/jesse/projects/sandboxes/ps-add-log/qc/hgdp_qc.bim.
+Of these, 0 are new, while 497228 are present in the base dataset.
+Error: 2 variants with 3+ alleles present.
+* If you believe this is due to strand inconsistency, try --flip with
+  /home/jesse/projects/sandboxes/ps-add-log/merge/temp_merge1-merge.missnp.
+  (Warning: if the subsequent merge seems to work, strand errors involving SNPs
+  with A/T or C/G alleles probably remain in your data.  If LD between nearby
+  SNPs is high, --flip-scan should detect them.)
+* If you are dealing with genuine multiallelic variants, we recommend exporting
+  that subset of the data to VCF (via e.g. '--recode vcf'), merging with
+  another tool/script, and then importing the result; PLINK is not yet suited
+  to handling them.
+See https://www.cog-genomics.org/plink/1.9/data#merge3 for more discussion.
+PLINK v1.9.0-b.7.11 64-bit (19 Aug 2025)           cog-genomics.org/plink/1.9/
+(C) 2005-2025 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/merge/kg_qc_clean.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/qc/kg_qc
+  --exclude /home/jesse/projects/sandboxes/ps-add-log/merge/temp_merge1-merge.missnp
+  --extract /home/jesse/projects/sandboxes/ps-add-log/merge/common_kg_hgdp.txt
+  --make-bed
+  --memory 14000
+  --out /home/jesse/projects/sandboxes/ps-add-log/merge/kg_qc_clean
+  --threads 6
+
+515579 MB RAM detected; reserving 14000 MB for main workspace.
+501477 variants loaded from .bim file.
+2573 people (1276 males, 1296 females, 1 ambiguous) loaded from .fam.
+Ambiguous sex ID written to
+/home/jesse/projects/sandboxes/ps-add-log/merge/kg_qc_clean.nosex .
+--extract: 497228 variants remaining.
+--exclude: 497226 variants remaining.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 2561 founders and 12 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is exactly 1.
+497226 variants and 2573 people pass filters and QC.
+Note: No phenotypes present.
+--make-bed to /home/jesse/projects/sandboxes/ps-add-log/merge/kg_qc_clean.bed +
+/home/jesse/projects/sandboxes/ps-add-log/merge/kg_qc_clean.bim +
+/home/jesse/projects/sandboxes/ps-add-log/merge/kg_qc_clean.fam ... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+PLINK v1.9.0-b.7.11 64-bit (19 Aug 2025)           cog-genomics.org/plink/1.9/
+(C) 2005-2025 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/merge/hgdp_qc_clean.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/qc/hgdp_qc
+  --exclude /home/jesse/projects/sandboxes/ps-add-log/merge/temp_merge1-merge.missnp
+  --extract /home/jesse/projects/sandboxes/ps-add-log/merge/common_kg_hgdp.txt
+  --make-bed
+  --memory 14000
+  --out /home/jesse/projects/sandboxes/ps-add-log/merge/hgdp_qc_clean
+  --threads 6
+
+515579 MB RAM detected; reserving 14000 MB for main workspace.
+497228 variants loaded from .bim file.
+929 people (612 males, 317 females) loaded from .fam.
+929 phenotype values loaded from .fam.
+--extract: 497228 variants remaining.
+--exclude: 497226 variants remaining.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 929 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is 0.996108.
+497226 variants and 929 people pass filters and QC.
+Phenotype data is quantitative.
+--make-bed to /home/jesse/projects/sandboxes/ps-add-log/merge/hgdp_qc_clean.bed
++ /home/jesse/projects/sandboxes/ps-add-log/merge/hgdp_qc_clean.bim +
+/home/jesse/projects/sandboxes/ps-add-log/merge/hgdp_qc_clean.fam ... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+PLINK v1.9.0-b.7.11 64-bit (19 Aug 2025)           cog-genomics.org/plink/1.9/
+(C) 2005-2025 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/merge/kg_qc_clean
+  --bmerge /home/jesse/projects/sandboxes/ps-add-log/merge/hgdp_qc_clean.bed /home/jesse/projects/sandboxes/ps-add-log/merge/hgdp_qc_clean.bim /home/jesse/projects/sandboxes/ps-add-log/merge/hgdp_qc_clean.fam
+  --make-bed
+  --memory 14000
+  --out /home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp
+  --threads 6
+
+515579 MB RAM detected; reserving 14000 MB for main workspace.
+2573 people loaded from
+/home/jesse/projects/sandboxes/ps-add-log/merge/kg_qc_clean.fam.
+929 people to be merged from
+/home/jesse/projects/sandboxes/ps-add-log/merge/hgdp_qc_clean.fam.
+Of these, 929 are new, while 0 are present in the base dataset.
+497226 markers loaded from
+/home/jesse/projects/sandboxes/ps-add-log/merge/kg_qc_clean.bim.
+497226 markers to be merged from
+/home/jesse/projects/sandboxes/ps-add-log/merge/hgdp_qc_clean.bim.
+Of these, 0 are new, while 497226 are present in the base dataset.
+Performing single-pass merge (3502 people, 497226 variants).
+Pass 1: fileset #1 complete.                                              Merged fileset written to
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp-merge.bed +
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp-merge.bim +
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp-merge.fam .
+497226 variants loaded from .bim file.
+3502 people (1888 males, 1613 females, 1 ambiguous) loaded from .fam.
+Ambiguous sex ID written to
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp.nosex .
+929 phenotype values loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 3490 founders and 12 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is 0.998967.
+497226 variants and 3502 people pass filters and QC.
+Phenotype data is quantitative.
+--make-bed to
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp.bed +
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp.bim +
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp.fam ... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+  3/5 Removing overlapping SGDP samples ...
+    Overlapping samples to remove: 154
+PLINK v1.9.0-b.7.11 64-bit (19 Aug 2025)           cog-genomics.org/plink/1.9/
+(C) 2005-2025 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_unique.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_aligned
+  --make-bed
+  --memory 14000
+  --out /home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_unique
+  --remove /home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_remove.txt
+  --threads 6
+
+515579 MB RAM detected; reserving 14000 MB for main workspace.
+457661 variants loaded from .bim file.
+345 people (179 males, 129 females, 37 ambiguous) loaded from .fam.
+Ambiguous sex IDs written to
+/home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_unique.nosex .
+345 phenotype values loaded from .fam.
+--remove: 191 people remaining.
+Warning: Ignoring phenotypes of missing-sex samples.  If you don't want those
+phenotypes to be ignored, use the --allow-no-sex flag.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 191 founders and 0 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate in remaining samples is 0.998516.
+457661 variants and 191 people pass filters and QC.
+Among remaining phenotypes, 0 are cases and 191 are controls.
+--make-bed to /home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_unique.bed +
+/home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_unique.bim +
+/home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_unique.fam ... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+  4/5 Three-way merge: (KG+HGDP) + SGDP ...
+PLINK v1.9.0-b.7.11 64-bit (19 Aug 2025)           cog-genomics.org/plink/1.9/
+(C) 2005-2025 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp.log.
+Options in effect:
+  --allow-no-sex
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp
+  --bmerge /home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_unique.bed /home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_unique.bim /home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_unique.fam
+  --make-bed
+  --memory 14000
+  --out /home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp
+  --threads 6
+
+515579 MB RAM detected; reserving 14000 MB for main workspace.
+3502 people loaded from
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp.fam.
+191 people to be merged from
+/home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_unique.fam.
+Of these, 191 are new, while 0 are present in the base dataset.
+497226 markers loaded from
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp.bim.
+457661 markers to be merged from
+/home/jesse/projects/sandboxes/ps-add-log/merge/sgdp_unique.bim.
+Of these, 3566 are new, while 454095 are present in the base dataset.
+Performing single-pass merge (3693 people, 500792 variants).
+Pass 1: fileset #1 complete.                                              Merged fileset written to
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp-merge.bed +
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp-merge.bim +
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp-merge.fam .
+500792 variants loaded from .bim file.
+3693 people (1978 males, 1679 females, 36 ambiguous) loaded from .fam.
+Ambiguous sex IDs written to
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp.nosex .
+1120 phenotype values loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 3681 founders and 12 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is 0.987751.
+500792 variants and 3693 people pass filters and QC.
+Phenotype data is quantitative.
+--make-bed to
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp.bed +
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp.bim +
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp.fam ...
+0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+  5/5 Post-merge QC (ambiguous SNPs + geno filter) ...
+    Ambiguous SNPs to remove: 28039
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp_qc.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp
+  --exclude /home/jesse/projects/sandboxes/ps-add-log/merge/ambiguous_snps.txt
+  --geno 0.03
+  --make-bed
+  --memory 14000
+  --no-input-missing-phenotype
+  --out /home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp_qc
+  --threads 6
+
+Start time: Mon Apr 27 14:57:33 2026
+515579 MiB RAM detected, ~494220 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+3693 samples (1679 females, 1978 males, 36 ambiguous; 3681 founders) loaded
+from /home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp.fam.
+500792 variants loaded from
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp.bim.
+1 quantitative phenotype loaded (3693 values).
+--exclude: 472753 variants remaining.
+Calculating allele frequencies... 0%13%26%39%52%65%78%91%done.
+--geno: 44674 variants removed due to missing genotype data.
+428079 variants remaining after main filters.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp_qc.fam ...
+done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp_qc.bim ...
+done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp_qc.bed ...
+0%13%26%39%52%65%79%92%done.
+End time: Mon Apr 27 14:57:34 2026
+    Samples: 3693
+    Variants: 428079
+  Cleaning up intermediate files ...
+  Merge complete.
+
+============================================
+Step 7: Prepare and merge GIAB Ashkenazi parents
+============================================
+Loading reference panel SNPs ...
+  Panel SNPs: 428,079
+
+Processing HG003 ...
+  Callable intervals: 554,108
+  Panel-matching variants: 128,838
+
+Processing HG004 ...
+  Callable intervals: 548,306
+  Panel-matching variants: 128,601
+
+Writing combined VCF → /home/jesse/projects/sandboxes/ps-add-log/qc/giab_combined.vcf
+
+  SNPs written: 428,077
+  Per-sample genotype counts:
+    Variant:          257,437
+    Hom-ref (filled): 586,769
+    Missing:          11,948
+  Allele mismatches (skipped): 2
+  Missing rate: 1.4%
+
+Converting to PLINK format with plink2 ...
+  Output: 428,077 SNPs, 2 samples
+
+GIAB preparation complete.
+  Reference panel: 428079 SNPs, 3693 samples
+  GIAB data: 428077 SNPs, 2 samples
+  Merging GIAB into reference panel ...
+PLINK v1.9.0-b.7.11 64-bit (19 Aug 2025)           cog-genomics.org/plink/1.9/
+(C) 2005-2025 Shaun Purcell, Christopher Chang   GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/merge/merged_with_giab.log.
+Options in effect:
+  --allow-no-sex
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp
+  --bmerge /home/jesse/projects/sandboxes/ps-add-log/qc/giab_qc.bed /home/jesse/projects/sandboxes/ps-add-log/qc/giab_qc.bim /home/jesse/projects/sandboxes/ps-add-log/qc/giab_qc.fam
+  --make-bed
+  --memory 14000
+  --out /home/jesse/projects/sandboxes/ps-add-log/merge/merged_with_giab
+  --threads 6
+
+515579 MB RAM detected; reserving 14000 MB for main workspace.
+3693 people loaded from
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp.fam.
+2 people to be merged from
+/home/jesse/projects/sandboxes/ps-add-log/qc/giab_qc.fam.
+Of these, 2 are new, while 0 are present in the base dataset.
+428079 markers loaded from
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp.bim.
+428077 markers to be merged from
+/home/jesse/projects/sandboxes/ps-add-log/qc/giab_qc.bim.
+Of these, 0 are new, while 428077 are present in the base dataset.
+Performing single-pass merge (3695 people, 428079 variants).
+Pass 1: fileset #1 complete.                                              Merged fileset written to
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_with_giab-merge.bed +
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_with_giab-merge.bim +
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_with_giab-merge.fam .
+428079 variants loaded from .bim file.
+3695 people (1978 males, 1679 females, 38 ambiguous) loaded from .fam.
+Ambiguous sex IDs written to
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_with_giab.nosex .
+1120 phenotype values loaded from .fam.
+Using 1 thread (no multithreaded calculations invoked).
+Before main variant filters, 3683 founders and 12 nonfounders present.
+Calculating allele frequencies... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99% done.
+Total genotyping rate is 0.999144.
+428079 variants and 3695 people pass filters and QC.
+Phenotype data is quantitative.
+--make-bed to
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_with_giab.bed +
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_with_giab.bim +
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_with_giab.fam ... 0%1%2%3%4%5%6%7%8%9%10%11%12%13%14%15%16%17%18%19%20%21%22%23%24%25%26%27%28%29%30%31%32%33%34%35%36%37%38%39%40%41%42%43%44%45%46%47%48%49%50%51%52%53%54%55%56%57%58%59%60%61%62%63%64%65%66%67%68%69%70%71%72%73%74%75%76%77%78%79%80%81%82%83%84%85%86%87%88%89%90%91%92%93%94%95%96%97%98%99%done.
+  Normalizing fam file ...
+  Merged panel: 428079 SNPs, 3695 samples
+  SNPs lost from reference panel: 0
+  Samples added: 2
+  GIAB merge complete.
+
+============================================
+Step 8: Build merged metadata CSV
+============================================
+Wrote 23 Koenig outlier IDs to summary/koenig_harmonized_outliers_2024.txt
+Wrote 4324 samples to summary/metadata.csv
+  Datasets: {'kg': 3202, 'hgdp': 929, 'sgdp': 191, 'giab': 2}
+  Neural ancestry coverage: 2964 / 4324
+
+============================================================
+Neural Ancestry: African (n=648)
+============================================================
+
+  By dataset:
+    kg: 504
+    hgdp: 131
+    sgdp: 13
+
+  By superpopulation:
+    African: 621
+    Middle Eastern: 27
+
+  By population_id:
+    GWD: 113
+    YRI: 108
+    ESN: 99
+    LWK: 99
+    MSL: 85
+    Mozabite: 27
+    Mandenka: 22
+    Biaka: 22
+    Yoruba: 22
+    Mbuti: 13
+    BantuKenya: 11
+    BantuSouthAfrica: 8
+    San: 6
+    Dinka: 3
+    Masai: 2
+    Khomani_San: 2
+    Saharawi: 2
+    Luo: 2
+    Somali: 1
+    Luhya: 1
+
+  By country:
+    Kenya: 6
+    Sudan: 3
+    SouthAfrica: 2
+    Western Sahara (Morocco): 2
+
+  Superpopulation mismatches (27 samples):
+    Mozabite (Middle Eastern): 27
+
+============================================================
+Neural Ancestry: American (n=89)
+============================================================
+
+  By dataset:
+    hgdp: 45
+    kg: 35
+    sgdp: 9
+
+  By superpopulation:
+    American: 89
+
+  By population_id:
+    PEL: 31
+    Karitiana: 12
+    Pima: 12
+    Surui: 8
+    Maya: 7
+    Colombian: 6
+    MXL: 4
+    Mixe: 3
+    Quechua: 3
+    Zapotec: 2
+    Chane: 1
+
+  By country:
+    Mexico: 5
+    Peru: 3
+    Argentina: 1
+
+============================================================
+Neural Ancestry: East Asian (n=766)
+============================================================
+
+  By dataset:
+    kg: 504
+    hgdp: 233
+    sgdp: 29
+
+  By superpopulation:
+    East Asian: 736
+    Central Asian Siberian: 18
+    Central South Asian: 10
+    Oceanian: 2
+
+  By population_id:
+    CHS: 105
+    JPT: 104
+    CHB: 103
+    KHV: 99
+    CDX: 93
+    Han: 33
+    Japanese: 27
+    Yakut: 25
+    She: 10
+    Yi: 10
+    Miao: 10
+    NorthernHan: 10
+    Uygur: 10
+    Tu: 10
+    Cambodian: 9
+    Tujia: 9
+    Hezhen: 9
+    Mongolian: 9
+    Daur: 9
+    Oroqen: 9
+    Dai: 9
+    Xibo: 9
+    Lahu: 8
+    Naxi: 8
+    Even: 3
+    Eskimo_Sireniki: 2
+    Burmese: 2
+    Eskimo_Naukan: 2
+    Korean: 2
+    Kyrgyz: 2
+    Igorot: 2
+    Ami: 2
+    Mansi: 2
+    Thai: 2
+    Tubalar: 2
+    Ulchi: 2
+    Altaian: 1
+    Atayal: 1
+    Eskimo_Chaplin: 1
+    Itelman: 1
+
+  By country:
+    Russia: 16
+    Taiwan: 3
+    Myanmar: 2
+    Philippines: 2
+    Korea: 2
+    Kyrgyzystan: 2
+    Thailand: 2
+
+  Superpopulation mismatches (30 samples):
+    Uygur (Central South Asian): 10
+    Even (Central Asian Siberian): 3
+    Eskimo_Sireniki (Central Asian Siberian): 2
+    Eskimo_Naukan (Central Asian Siberian): 2
+    Tubalar (Central Asian Siberian): 2
+    Mansi (Central Asian Siberian): 2
+    Kyrgyz (Central Asian Siberian): 2
+    Igorot (Oceanian): 2
+    Ulchi (Central Asian Siberian): 2
+    Eskimo_Chaplin (Central Asian Siberian): 1
+    Altaian (Central Asian Siberian): 1
+    Itelman (Central Asian Siberian): 1
+
+============================================================
+Neural Ancestry: European (n=584)
+============================================================
+
+  By dataset:
+    kg: 404
+    hgdp: 155
+    sgdp: 25
+
+  By superpopulation:
+    European: 559
+    West Eurasian: 25
+
+  By population_id:
+    TSI: 107
+    IBS: 107
+    FIN: 99
+    GBR: 91
+    French: 28
+    Sardinian: 28
+    Russian: 25
+    Basque: 23
+    Adygei: 16
+    Orcadian: 15
+    BergamoItalian: 12
+    Tuscan: 8
+    Crete: 2
+    Abkhasian: 2
+    North_Ossetian: 2
+    Icelandic: 2
+    Hungarian: 2
+    Greek: 2
+    Estonian: 2
+    Bulgarian: 2
+    Saami: 2
+    Polish: 1
+    Samaritan: 1
+    Czech: 1
+    Albanian: 1
+    Chechen: 1
+    Norwegian: 1
+    Lezgin: 1
+
+  By country:
+    Russia: 5
+    Greece: 4
+    Hungary: 2
+    Iceland: 2
+    Bulgaria: 2
+    Finland: 2
+    Estonia: 2
+    Albania: 1
+    Czechoslovia(pre1989): 1
+    Norway: 1
+    Abkhazia: 1
+    Poland: 1
+    Israel: 1
+
+  Superpopulation mismatches (25 samples):
+    Abkhasian (West Eurasian): 2
+    Bulgarian (West Eurasian): 2
+    Estonian (West Eurasian): 2
+    Crete (West Eurasian): 2
+    Greek (West Eurasian): 2
+    North_Ossetian (West Eurasian): 2
+    Icelandic (West Eurasian): 2
+    Hungarian (West Eurasian): 2
+    Saami (West Eurasian): 2
+    Czech (West Eurasian): 1
+    Albanian (West Eurasian): 1
+    Chechen (West Eurasian): 1
+    Lezgin (West Eurasian): 1
+    Norwegian (West Eurasian): 1
+    Polish (West Eurasian): 1
+    Samaritan (West Eurasian): 1
+
+============================================================
+Neural Ancestry: Oceanian (n=32)
+============================================================
+
+  By dataset:
+    hgdp: 28
+    sgdp: 4
+
+  By superpopulation:
+    Oceanian: 32
+
+  By population_id:
+    Bougainville: 11
+    PapuanHighlands: 9
+    PapuanSepik: 8
+    Australian: 2
+    Dusun: 2
+
+  By country:
+    Australia: 2
+    Brunei: 2
+
+============================================================
+Neural Ancestry: South Asian (n=695)
+============================================================
+
+  By dataset:
+    kg: 489
+    hgdp: 187
+    sgdp: 19
+
+  By superpopulation:
+    South Asian: 506
+    Central South Asian: 187
+    West Eurasian: 2
+
+  By population_id:
+    GIH: 103
+    ITU: 102
+    STU: 102
+    PJL: 96
+    BEB: 86
+    Brahui: 25
+    Makrani: 25
+    Balochi: 24
+    Sindhi: 24
+    Pathan: 24
+    Burusho: 24
+    Kalash: 22
+    Hazara: 19
+    Brahmin: 2
+    Irula: 2
+    Mala: 2
+    Kapu: 2
+    Kusunda: 2
+    Madiga: 2
+    Tajik: 2
+    Relli: 2
+    Yadava: 2
+    Khonda_Dora: 1
+
+  By country:
+    India: 15
+    Nepal: 2
+    Tajikistan: 2
+
+  Superpopulation mismatches (189 samples):
+    Brahui (Central South Asian): 25
+    Makrani (Central South Asian): 25
+    Balochi (Central South Asian): 24
+    Pathan (Central South Asian): 24
+    Burusho (Central South Asian): 24
+    Sindhi (Central South Asian): 24
+    Kalash (Central South Asian): 22
+    Hazara (Central South Asian): 19
+    Tajik (West Eurasian): 2
+
+============================================================
+Neural Ancestry: West Asian (n=150)
+============================================================
+
+  By dataset:
+    hgdp: 134
+    sgdp: 16
+
+  By superpopulation:
+    Middle Eastern: 134
+    West Eurasian: 16
+
+  By population_id:
+    Bedouin: 46
+    Palestinian: 46
+    Druze: 42
+    Jordanian: 3
+    Armenian: 2
+    Georgian: 2
+    Iranian: 2
+    Iraqi_Jew: 2
+    Turkish: 2
+    Yemenite_Jew: 2
+    Lezgin: 1
+
+  By country:
+    Jordan: 3
+    Armenia: 2
+    Georgia: 2
+    Iran: 2
+    Iraq: 2
+    Turkey: 2
+    Yemen: 2
+    Russia: 1
+
+  Superpopulation mismatches (150 samples):
+    Bedouin (Middle Eastern): 46
+    Palestinian (Middle Eastern): 46
+    Druze (Middle Eastern): 42
+    Jordanian (West Eurasian): 3
+    Armenian (West Eurasian): 2
+    Iranian (West Eurasian): 2
+    Georgian (West Eurasian): 2
+    Iraqi_Jew (West Eurasian): 2
+    Turkish (West Eurasian): 2
+    Yemenite_Jew (West Eurasian): 2
+    Lezgin (West Eurasian): 1
+
+============================================
+Step 9: Build supervised reference populations
+============================================
+Outlier exclusions:
+  Koenig harmonized outliers (summary/koenig_harmonized_outliers_2024.txt): 5 samples
+    HG01628, HG01629, HG01630, HG01694, HG01696 — IBS (European)
+  Other Spanish outliers (literature_reference/other_spanish_outliers.txt): 2 samples
+    HG01669, HG01695 — IBS (European)
+  American admixed outliers (literature_reference/american_admixed_outliers.txt): 137 samples
+    HGDP00703 — Colombian (American)
+    HGDP00998 — Karitiana (American)
+    15 samples — Maya (American)
+    114 samples — PEL (American)
+    HGDP01050, HGDP01055, HGDP01058, HGDP01060 — Pima (American)
+    NA11201 — Quechua (American)
+    zapo0099 — Zapotec (American)
+  Oceanian admixed outliers (literature_reference/oceanian_admixed_outliers.txt): 11 samples
+    10 samples — Bougainville (Oceanian)
+    HGDP00544 — PapuanSepik (Oceanian)
+
+Wrote 2172 samples to summary/supervised.csv
+
+African (n=483):
+  Biaka: 22
+  ESN: 149
+  MSL: 99
+  Mbuti: 13
+  YRI: 178
+  Yoruba: 22
+
+American (n=57):
+  Chane: 1
+  Colombian: 6
+  Karitiana: 11
+  Maya: 6
+  Mixe: 3
+  Nahua: 2
+  PEL: 8
+  Pima: 9
+  Quechua: 2
+  Surui: 8
+  Zapotec: 1
+
+East Asian (n=551):
+  CDX: 93
+  CHB: 103
+  CHS: 163
+  Dai: 9
+  Han: 33
+  JPT: 104
+  Japanese: 27
+  She: 10
+  Tujia: 9
+
+European (n=740):
+  Basque: 23
+  BergamoItalian: 12
+  CEU: 179
+  FIN: 99
+  French: 28
+  GBR: 91
+  IBS: 150
+  Orcadian: 15
+  Sardinian: 28
+  TSI: 107
+  Tuscan: 8
+
+Oceanian (n=17):
+  Bougainville: 1
+  PapuanHighlands: 9
+  PapuanSepik: 7
+
+South Asian (n=324):
+  GIH: 103
+  ITU: 107
+  STU: 114
+
+
+============================================
+Step 10: Install ADMIXTURE
+============================================
+  [download] Downloading ADMIXTURE 1.3.0 ...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 1871k  100 1871k    0     0  4283k      0 --:--:-- --:--:-- --:--:-- 4293k
+****                   ADMIXTURE Version 1.3.0                  ****
+  [ok] ADMIXTURE installed successfully.
+****                   ADMIXTURE Version 1.3.0                  ****
+
+============================================
+Step 11: QC merged panel for ADMIXTURE (MAF 0.0100)
+============================================
+  Starting data: 428,079 SNPs, 3,695 samples
+
+  Step 0: Extract supervised samples for SNP-based QC
+    Supervised samples in merged panel: 1,878 of 2,172
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/supervised_only.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp
+  --keep /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/supervised_keep.txt
+  --make-bed
+  --memory 14000
+  --no-input-missing-phenotype
+  --out /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/supervised_only
+  --threads 6
+
+Start time: Mon Apr 27 14:58:01 2026
+515579 MiB RAM detected, ~494650 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+3695 samples (1679 females, 1978 males, 38 ambiguous; 3695 founders) loaded
+from /home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp.fam.
+428079 variants loaded from
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp.bim.
+1 quantitative phenotype loaded (3695 values).
+--keep: 1878 samples remaining.
+1878 samples (891 females, 982 males, 5 ambiguous; 1878 founders) remaining
+after main filters.
+1878 quantitative phenotype values remaining after main filters.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/supervised_only.fam
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/supervised_only.bim
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/supervised_only.bed
+... 0%15%30%45%61%76%91%done.
+End time: Mon Apr 27 14:58:01 2026
+    Extracted 1,878 supervised samples for SNP filtering
+
+  Step 1/8: Genotype missingness filter (--geno 0.01) [supervised only]
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/geno_filtered.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/supervised_only
+  --geno 0.01
+  --make-bed
+  --memory 14000
+  --no-input-missing-phenotype
+  --out /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/geno_filtered
+  --threads 6
+
+Start time: Mon Apr 27 14:58:01 2026
+515579 MiB RAM detected, ~494429 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+1878 samples (891 females, 982 males, 5 ambiguous; 1878 founders) loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/supervised_only.fam.
+428079 variants loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/supervised_only.bim.
+1 quantitative phenotype loaded (1878 values).
+Calculating allele frequencies... 0%15%30%45%61%76%91%done.
+--geno: 1502 variants removed due to missing genotype data.
+426577 variants remaining after main filters.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/geno_filtered.fam
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/geno_filtered.bim
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/geno_filtered.bed
+... 0%15%30%45%61%76%91%done.
+End time: Mon Apr 27 14:58:02 2026
+    Removed 1,502 SNPs with >0.01 missingness in supervised samples
+    Remaining: 426,577 SNPs
+
+  Step 2/8: MAF filter (--maf 0.0100) [supervised only]
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/maf_filtered.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/geno_filtered
+  --maf 0.0100
+  --make-bed
+  --memory 14000
+  --no-input-missing-phenotype
+  --out /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/maf_filtered
+  --threads 6
+
+Start time: Mon Apr 27 14:58:02 2026
+515579 MiB RAM detected, ~494269 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+1878 samples (891 females, 982 males, 5 ambiguous; 1878 founders) loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/geno_filtered.fam.
+426577 variants loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/geno_filtered.bim.
+1 quantitative phenotype loaded (1878 values).
+Calculating allele frequencies... 0%15%30%46%61%76%92%done.
+64411 variants removed due to allele frequency threshold(s)
+(--maf/--max-maf/--mac/--max-mac).
+362166 variants remaining after main filters.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/maf_filtered.fam
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/maf_filtered.bim
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/maf_filtered.bed
+... 0%15%30%45%61%76%91%done.
+End time: Mon Apr 27 14:58:02 2026
+    Removed 64,411 SNPs with MAF < 0.0100 in supervised samples
+    Remaining: 362,166 SNPs
+
+  Step 3/8: Exclude long-range LD regions (Price et al. 2008, hg38) [supervised only]
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ldregion_excluded.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/maf_filtered
+  --exclude range /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/high_ld_ranges.txt
+  --make-bed
+  --memory 14000
+  --no-input-missing-phenotype
+  --out /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ldregion_excluded
+  --threads 6
+
+Start time: Mon Apr 27 14:58:02 2026
+515579 MiB RAM detected, ~494126 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+1878 samples (891 females, 982 males, 5 ambiguous; 1878 founders) loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/maf_filtered.fam.
+362166 variants loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/maf_filtered.bim.
+1 quantitative phenotype loaded (1878 values).
+--exclude bed1: 5228 variants excluded.
+356938 variants remaining after main filters.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ldregion_excluded.fam
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ldregion_excluded.bim
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ldregion_excluded.bed
+... 0%17%36%53%72%90%done.
+End time: Mon Apr 27 14:58:02 2026
+    Removed 5,228 SNPs in long-range LD regions
+    Remaining: 356,938 SNPs
+
+  Step 4/8: LD pruning (window=50, step=10, r2=0.1) [supervised only]
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_prune.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ldregion_excluded
+  --indep-pairwise 50 10 0.1
+  --memory 14000
+  --no-input-missing-phenotype
+  --out /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_prune
+  --threads 6
+
+Start time: Mon Apr 27 14:58:02 2026
+515579 MiB RAM detected, ~493989 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+1878 samples (891 females, 982 males, 5 ambiguous; 1878 founders) loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ldregion_excluded.fam.
+356938 variants loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ldregion_excluded.bim.
+1 quantitative phenotype loaded (1878 values).
+Calculating allele frequencies... 0%18%36%55%73%91%done.
+--indep-pairwise (5 compute threads): 0%50%221812/356938 variants removed.
+Writing...Variant lists written to
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_prune.prune.in
+and
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_prune.prune.out
+.
+End time: Mon Apr 27 14:58:03 2026
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_pruned.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ldregion_excluded
+  --extract /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_prune.prune.in
+  --make-bed
+  --memory 14000
+  --no-input-missing-phenotype
+  --out /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_pruned
+  --threads 6
+
+Start time: Mon Apr 27 14:58:03 2026
+515579 MiB RAM detected, ~493792 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+1878 samples (891 females, 982 males, 5 ambiguous; 1878 founders) loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ldregion_excluded.fam.
+356938 variants loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ldregion_excluded.bim.
+1 quantitative phenotype loaded (1878 values).
+--extract: 135126 variants remaining.
+135126 variants remaining after main filters.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_pruned.fam
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_pruned.bim
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_pruned.bed
+... 0%18%36%54%72%91%done.
+End time: Mon Apr 27 14:58:03 2026
+    Removed 221,812 SNPs by LD pruning
+    Remaining: 135,126 SNPs
+
+  Step 5/8: Individual missingness filter (--mind 0.01) [supervised only]
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/mind_filtered.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_pruned
+  --make-bed
+  --memory 14000
+  --mind 0.01
+  --no-input-missing-phenotype
+  --out /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/mind_filtered
+  --threads 6
+
+Start time: Mon Apr 27 14:58:03 2026
+515579 MiB RAM detected, ~493805 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+1878 samples (891 females, 982 males, 5 ambiguous; 1878 founders) loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_pruned.fam.
+135126 variants loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_pruned.bim.
+1 quantitative phenotype loaded (1878 values).
+Calculating sample missingness rates... 0%48%96%done.
+5 samples removed due to missing genotype data (--mind).
+IDs written to
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/mind_filtered.mindrem.id
+.
+1873 samples (891 females, 978 males, 4 ambiguous; 1873 founders) remaining
+after main filters.
+1873 quantitative phenotype values remaining after main filters.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/mind_filtered.fam
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/mind_filtered.bim
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/mind_filtered.bed
+... 0%48%96%done.
+End time: Mon Apr 27 14:58:03 2026
+    Removed 5 supervised individuals with >0.01 missingness
+    Removed supervised individuals:
+      HGDP00452 — Biaka (African)
+      HGDP00456 — Mbuti (African)
+      HGDP00665 — Sardinian (European)
+      HGDP00982 — Mbuti (African)
+      Peru60 — Quechua (American)
+    Remaining: 1,873 supervised individuals
+
+  Step 6/8: Kinship filtering [supervised only] (AMR=0.088, non-AMR=0.05)
+    Supervised AMR: 56
+    Supervised non-AMR: 1,817
+
+    6a. AMR kinship (KING cutoff = 0.088)
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/amr_king.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/mind_filtered
+  --keep /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/amr_samples.txt
+  --king-cutoff 0.088
+  --memory 14000
+  --no-input-missing-phenotype
+  --out /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/amr_king
+  --threads 6
+
+Start time: Mon Apr 27 14:58:03 2026
+515579 MiB RAM detected, ~493820 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+1873 samples (891 females, 978 males, 4 ambiguous; 1873 founders) loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/mind_filtered.fam.
+135126 variants loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/mind_filtered.bim.
+1 quantitative phenotype loaded (1873 values).
+--keep: 56 samples remaining.
+56 samples (28 females, 25 males, 3 ambiguous; 56 founders) remaining after
+main filters.
+56 quantitative phenotype values remaining after main filters.
+--king-cutoff pass 1/1: Scanning for rare variants... 0%48%96%done.
+73240 variants handled by initial scan (61886 remaining).
+--king-cutoff pass 1/1: 0 variants complete.--king-cutoff pass 1/1: 1536 variants complete.--king-cutoff pass 1/1: 3072 variants complete.--king-cutoff pass 1/1: 4608 variants complete.--king-cutoff pass 1/1: 6144 variants complete.--king-cutoff pass 1/1: 7680 variants complete.--king-cutoff pass 1/1: 9216 variants complete.--king-cutoff pass 1/1: 10752 variants complete.--king-cutoff pass 1/1: 12288 variants complete.--king-cutoff pass 1/1: 13824 variants complete.--king-cutoff pass 1/1: 15360 variants complete.--king-cutoff pass 1/1: 16896 variants complete.--king-cutoff pass 1/1: 18432 variants complete.--king-cutoff pass 1/1: 19968 variants complete.--king-cutoff pass 1/1: 21504 variants complete.--king-cutoff pass 1/1: 23040 variants complete.--king-cutoff pass 1/1: 24576 variants complete.--king-cutoff pass 1/1: 26112 variants complete.--king-cutoff pass 1/1: 27648 variants complete.--king-cutoff pass 1/1: 29184 variants complete.--king-cutoff pass 1/1: 30720 variants complete.--king-cutoff pass 1/1: 32256 variants complete.--king-cutoff pass 1/1: 33792 variants complete.--king-cutoff pass 1/1: 35328 variants complete.--king-cutoff pass 1/1: 36864 variants complete.--king-cutoff pass 1/1: 38400 variants complete.--king-cutoff pass 1/1: 39936 variants complete.--king-cutoff pass 1/1: 41472 variants complete.--king-cutoff pass 1/1: 43008 variants complete.--king-cutoff pass 1/1: 44544 variants complete.--king-cutoff pass 1/1: 46080 variants complete.--king-cutoff pass 1/1: 47616 variants complete.--king-cutoff pass 1/1: 49152 variants complete.--king-cutoff pass 1/1: 50688 variants complete.--king-cutoff pass 1/1: 52224 variants complete.--king-cutoff pass 1/1: 53760 variants complete.--king-cutoff pass 1/1: 55296 variants complete.--king-cutoff pass 1/1: 56832 variants complete.--king-cutoff pass 1/1: 58368 variants complete.--king-cutoff pass 1/1: 59904 variants complete.--king-cutoff pass 1/1: 61440 variants complete.--king-cutoff pass 1/1: Condensing...                 done.
+--king-cutoff: 135126 variants processed.
+--king-cutoff: Excluded sample IDs written to
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/amr_king.king.cutoff.out.id
+, and 50 remaining sample IDs written to
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/amr_king.king.cutoff.in.id
+.
+End time: Mon Apr 27 14:58:04 2026
+        AMR removed (related): 6 of 56
+        Removed supervised AMR individuals:
+          HGDP00845 — Surui (American)
+          HGDP00849 — Surui (American)
+          HGDP00852 — Surui (American)
+          HGDP01015 — Karitiana (American)
+          HGDP01044 — Pima (American)
+          HGDP01053 — Pima (American)
+
+    6b. Non-AMR kinship (KING cutoff = 0.05)
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/nonamr_king.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/mind_filtered
+  --keep /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/nonamr_samples.txt
+  --king-cutoff 0.05
+  --memory 14000
+  --no-input-missing-phenotype
+  --out /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/nonamr_king
+  --threads 6
+
+Start time: Mon Apr 27 14:58:04 2026
+515579 MiB RAM detected, ~493710 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+1873 samples (891 females, 978 males, 4 ambiguous; 1873 founders) loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/mind_filtered.fam.
+135126 variants loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/mind_filtered.bim.
+1 quantitative phenotype loaded (1873 values).
+--keep: 1817 samples remaining.
+1817 samples (863 females, 953 males, 1 ambiguous; 1817 founders) remaining
+after main filters.
+1817 quantitative phenotype values remaining after main filters.
+--king-cutoff pass 1/1: Scanning for rare variants... 0%48%96%done.
+26464 variants handled by initial scan (108662 remaining).
+--king-cutoff pass 1/1: 0 variants complete.--king-cutoff pass 1/1: 1536 variants complete.--king-cutoff pass 1/1: 3072 variants complete.--king-cutoff pass 1/1: 4608 variants complete.--king-cutoff pass 1/1: 6144 variants complete.--king-cutoff pass 1/1: 7680 variants complete.--king-cutoff pass 1/1: 9216 variants complete.--king-cutoff pass 1/1: 10752 variants complete.--king-cutoff pass 1/1: 12288 variants complete.--king-cutoff pass 1/1: 13824 variants complete.--king-cutoff pass 1/1: 15360 variants complete.--king-cutoff pass 1/1: 16896 variants complete.--king-cutoff pass 1/1: 18432 variants complete.--king-cutoff pass 1/1: 19968 variants complete.--king-cutoff pass 1/1: 21504 variants complete.--king-cutoff pass 1/1: 23040 variants complete.--king-cutoff pass 1/1: 24576 variants complete.--king-cutoff pass 1/1: 26112 variants complete.--king-cutoff pass 1/1: 27648 variants complete.--king-cutoff pass 1/1: 29184 variants complete.--king-cutoff pass 1/1: 30720 variants complete.--king-cutoff pass 1/1: 32256 variants complete.--king-cutoff pass 1/1: 33792 variants complete.--king-cutoff pass 1/1: 35328 variants complete.--king-cutoff pass 1/1: 36864 variants complete.--king-cutoff pass 1/1: 38400 variants complete.--king-cutoff pass 1/1: 39936 variants complete.--king-cutoff pass 1/1: 41472 variants complete.--king-cutoff pass 1/1: 43008 variants complete.--king-cutoff pass 1/1: 44544 variants complete.--king-cutoff pass 1/1: 46080 variants complete.--king-cutoff pass 1/1: 47616 variants complete.--king-cutoff pass 1/1: 49152 variants complete.--king-cutoff pass 1/1: 50688 variants complete.--king-cutoff pass 1/1: 52224 variants complete.--king-cutoff pass 1/1: 53760 variants complete.--king-cutoff pass 1/1: 55296 variants complete.--king-cutoff pass 1/1: 56832 variants complete.--king-cutoff pass 1/1: 58368 variants complete.--king-cutoff pass 1/1: 59904 variants complete.--king-cutoff pass 1/1: 61440 variants complete.--king-cutoff pass 1/1: 62976 variants complete.--king-cutoff pass 1/1: 64512 variants complete.--king-cutoff pass 1/1: 66048 variants complete.--king-cutoff pass 1/1: 67584 variants complete.--king-cutoff pass 1/1: 69120 variants complete.--king-cutoff pass 1/1: 70656 variants complete.--king-cutoff pass 1/1: 72192 variants complete.--king-cutoff pass 1/1: 73728 variants complete.--king-cutoff pass 1/1: 75264 variants complete.--king-cutoff pass 1/1: 76800 variants complete.--king-cutoff pass 1/1: 78336 variants complete.--king-cutoff pass 1/1: 79872 variants complete.--king-cutoff pass 1/1: 81408 variants complete.--king-cutoff pass 1/1: 82944 variants complete.--king-cutoff pass 1/1: 84480 variants complete.--king-cutoff pass 1/1: 86016 variants complete.--king-cutoff pass 1/1: 87552 variants complete.--king-cutoff pass 1/1: 89088 variants complete.--king-cutoff pass 1/1: 90624 variants complete.--king-cutoff pass 1/1: 92160 variants complete.--king-cutoff pass 1/1: 93696 variants complete.--king-cutoff pass 1/1: 95232 variants complete.--king-cutoff pass 1/1: 96768 variants complete.--king-cutoff pass 1/1: 98304 variants complete.--king-cutoff pass 1/1: 99840 variants complete.--king-cutoff pass 1/1: 101376 variants complete.--king-cutoff pass 1/1: 102912 variants complete.--king-cutoff pass 1/1: 104448 variants complete.--king-cutoff pass 1/1: 105984 variants complete.--king-cutoff pass 1/1: 107520 variants complete.--king-cutoff pass 1/1: Condensing...                 done.
+--king-cutoff: 135126 variants processed.
+--king-cutoff: Excluded sample IDs written to
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/nonamr_king.king.cutoff.out.id
+, and 1795 remaining sample IDs written to
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/nonamr_king.king.cutoff.in.id
+.
+End time: Mon Apr 27 14:58:05 2026
+        Non-AMR removed (related): 22 of 1,817
+        Removed supervised non-AMR individuals:
+          HG00120 — GBR (European)
+          HG00240 — GBR (European)
+          HG00595 — CHS (East Asian)
+          HG00607 — CHS (East Asian)
+          HG00881 — CDX (East Asian)
+          HG02179 — CDX (East Asian)
+          HG02379 — CDX (East Asian)
+          HG03097 — MSL (African)
+          HG03372 — ESN (African)
+          HG03457 — MSL (African)
+          HG03478 — MSL (African)
+          HG03484 — MSL (African)
+          HG03574 — MSL (African)
+          HG03873 — ITU (South Asian)
+          NA12383 — CEU (European)
+          NA19101 — YRI (African)
+          NA20891 — GIH (South Asian)
+          HGDP00463 — Mbuti (African)
+          HGDP00479 — Biaka (African)
+          HGDP00797 — Orcadian (European)
+          HGDP00984 — Mbuti (African)
+          HGDP01330 — She (East Asian)
+
+    Total supervised removed by kinship: 28
+    Supervised samples after kinship: 1,845
+
+  Step 7/8: HWE exact test (--hwe 1e-50) [unrelated supervised only]
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/unrelated_supervised.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_pruned
+  --keep /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/supervised_qc_keep.txt
+  --make-bed
+  --memory 14000
+  --no-input-missing-phenotype
+  --out /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/unrelated_supervised
+  --threads 6
+
+Start time: Mon Apr 27 14:58:05 2026
+515579 MiB RAM detected, ~493829 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+1878 samples (891 females, 982 males, 5 ambiguous; 1878 founders) loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_pruned.fam.
+135126 variants loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/ld_pruned.bim.
+1 quantitative phenotype loaded (1878 values).
+--keep: 1845 samples remaining.
+1845 samples (880 females, 961 males, 4 ambiguous; 1845 founders) remaining
+after main filters.
+1845 quantitative phenotype values remaining after main filters.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/unrelated_supervised.fam
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/unrelated_supervised.bim
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/unrelated_supervised.bed
+... 0%48%96%done.
+End time: Mon Apr 27 14:58:05 2026
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/hwe_filtered.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/unrelated_supervised
+  --hwe 1e-50
+  --make-bed
+  --memory 14000
+  --no-input-missing-phenotype
+  --out /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/hwe_filtered
+  --threads 6
+
+Start time: Mon Apr 27 14:58:05 2026
+515579 MiB RAM detected, ~493694 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+1845 samples (880 females, 961 males, 4 ambiguous; 1845 founders) loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/unrelated_supervised.fam.
+135126 variants loaded from
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/unrelated_supervised.bim.
+1 quantitative phenotype loaded (1845 values).
+Calculating allele frequencies... 0%48%96%done.
+--hwe: 106 variants removed due to Hardy-Weinberg exact test (founders only).
+135020 variants remaining after main filters.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/hwe_filtered.fam
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/hwe_filtered.bim
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/hwe_filtered.bed
+... 0%48%97%done.
+End time: Mon Apr 27 14:58:05 2026
+    Removed 106 SNPs failing HWE (p < 1e-50) in unrelated supervised
+    Remaining: 135,020 SNPs
+
+  Step 8/8: Build final panel (supervised QC'd SNPs, all samples)
+    Supervised (QC passed): 1,845
+    Non-supervised (all): 1,817
+    Total: 3,662
+PLINK v2.0.0-a.7.0LM 64-bit Intel (25 Apr 2026)     cog-genomics.org/plink/2.0/
+(C) 2005-2026 Shaun Purcell, Christopher Chang    GNU General Public License v3
+Logging to /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/ancestry_qc.log.
+Options in effect:
+  --bfile /home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp
+  --extract /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/final_snps.txt
+  --keep /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/scrap/final_keep.txt
+  --make-bed
+  --memory 14000
+  --no-input-missing-phenotype
+  --out /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/ancestry_qc
+  --threads 6
+
+Start time: Mon Apr 27 14:58:06 2026
+515579 MiB RAM detected, ~493581 available; reserving 14000 MiB for main
+workspace.
+Using up to 6 compute threads.
+3695 samples (1679 females, 1978 males, 38 ambiguous; 3695 founders) loaded
+from /home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp.fam.
+428079 variants loaded from
+/home/jesse/projects/sandboxes/ps-add-log/merge/merged_kg_hgdp_sgdp.bim.
+1 quantitative phenotype loaded (3695 values).
+--extract: 135020 variants remaining.
+--keep: 3662 samples remaining.
+3662 samples (1668 females, 1957 males, 37 ambiguous; 3662 founders) remaining
+after main filters.
+3662 quantitative phenotype values remaining after main filters.
+135020 variants remaining after main filters.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/ancestry_qc.fam
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/ancestry_qc.bim
+... done.
+Writing
+/home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/ancestry_qc.bed
+... 0%14%29%44%59%75%91%done.
+End time: Mon Apr 27 14:58:06 2026
+    Output: 3,662 samples, 135,020 SNPs
+
+  ================================================
+  QC Summary
+  ================================================
+  All filters computed on supervised samples only (n=1,878)
+  Parameters:
+    Geno=0.01, MAF=0.0100, HWE=1e-50
+    LD window=50 step=10 r2=0.1
+    Mind=0.01, KING AMR=0.088, KING non-AMR=0.05
+  SNPs:    428,079 -> 135,020
+  Supervised samples: 1,878 -> 1,845
+  Final panel: 3,662 samples (1,845 supervised + non-supervised)
+  Output:  /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/ancestry_qc.{bed,bim,fam}
+
+  ADMIXTURE QC complete.
+
+============================================
+Step 12: Run ADMIXTURE supervised ancestry estimation (K=6)
+============================================
+============================================================
+ADMIXTURE supervised ancestry estimation
+============================================================
+
+K model: K=6
+Active reference populations (K=6):
+  African: 483
+  American: 57
+  East Asian: 551
+  European: 740
+  Oceanian: 17
+  South Asian: 324
+  Total active supervised: 2,172
+
+QC'd samples: 3,662
+Active supervised samples in QC'd data: 1,845 (327 removed by QC)
+  Lost by reference population:
+    Biaka (African): HGDP00452, HGDP00479
+    ESN (African): 45 samples
+    MSL (African): 16 samples
+    Mbuti (African): HGDP00456, HGDP00463, HGDP00982, HGDP00984
+    YRI (African): 58 samples
+    Karitiana (American): HGDP01015
+    Pima (American): HGDP01044, HGDP01053
+    Quechua (American): Peru60
+    Surui (American): HGDP00845, HGDP00849, HGDP00852
+    CDX (East Asian): HG00881, HG02179, HG02379
+    CHS (East Asian): 60 samples
+    She (East Asian): HGDP01330
+    CEU (European): 59 samples
+    GBR (European): HG00120, HG00240
+    IBS (European): 48 samples
+    Orcadian (European): HGDP00797
+    Sardinian (European): HGDP00665
+    GIH (South Asian): NA20891, NA20900, NA21135
+    ITU (South Asian): HG03719, HG03732, HG03873, HG04217
+    STU (South Asian): 13 samples
+
+Splitting 1,845 active supervised samples into 3 stratified folds ...
+  Fold 1: 618 samples
+    African: 120
+    American: 17
+    East Asian: 163
+    European: 210
+    Oceanian: 6
+    South Asian: 102
+  Fold 2: 615 samples
+    African: 119
+    American: 17
+    East Asian: 162
+    European: 210
+    Oceanian: 6
+    South Asian: 101
+  Fold 3: 612 samples
+    African: 119
+    American: 16
+    East Asian: 162
+    European: 209
+    Oceanian: 5
+    South Asian: 101
+
+Wrote /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/fold_assignments.csv
+
+============================================================
+3-fold cross-validation
+============================================================
+
+--- Fold 1: holdout = fold 1, training = folds [2, 3] ---
+    Training: 1,227 samples
+    Holdout:  618 samples
+    Running: admixture scrap/fold1.bed 6 --supervised -j6 -s 42
+    Convergence acceleration algorithm: QuasiNewton, 3 secant conditions
+    1 (EM) 	Elapsed: 37.877	Loglikelihood: -3.1423e+08	(delta): 5.0759e+08
+    2 (EM) 	Elapsed: 37.672	Loglikelihood: -3.04976e+08	(delta): 9.25413e+06
+    3 (EM) 	Elapsed: 38.175	Loglikelihood: -3.02478e+08	(delta): 2.49856e+06
+    4 (EM) 	Elapsed: 36.902	Loglikelihood: -3.01335e+08	(delta): 1.14255e+06
+    5 (EM) 	Elapsed: 37.667	Loglikelihood: -3.00645e+08	(delta): 690453
+    Initial loglikelihood: -3.00645e+08
+    1 (QN/Block) 	Elapsed: 98.13	Loglikelihood: -2.86462e+08	(delta): 1.41829e+07
+    2 (QN/Block) 	Elapsed: 98.15	Loglikelihood: -2.85634e+08	(delta): 827942
+    3 (QN/Block) 	Elapsed: 97.778	Loglikelihood: -2.8539e+08	(delta): 243252
+    4 (QN/Block) 	Elapsed: 93.052	Loglikelihood: -2.85233e+08	(delta): 157192
+    5 (QN/Block) 	Elapsed: 93.122	Loglikelihood: -2.85141e+08	(delta): 92534
+    6 (QN/Block) 	Elapsed: 95.623	Loglikelihood: -2.85119e+08	(delta): 21310.2
+    7 (QN/Block) 	Elapsed: 94.389	Loglikelihood: -2.85114e+08	(delta): 5372.3
+    8 (QN/Block) 	Elapsed: 97.49	Loglikelihood: -2.85113e+08	(delta): 995.854
+    9 (QN/Block) 	Elapsed: 101.593	Loglikelihood: -2.85113e+08	(delta): 134.873
+    10 (QN/Block) 	Elapsed: 100.132	Loglikelihood: -2.85113e+08	(delta): 15.0718
+    11 (QN/Block) 	Elapsed: 100.82	Loglikelihood: -2.85113e+08	(delta): 1.14313
+    12 (QN/Block) 	Elapsed: 98.953	Loglikelihood: -2.85113e+08	(delta): 0.0319306
+    13 (QN/Block) 	Elapsed: 99.028	Loglikelihood: -2.85113e+08	(delta): 0.00409287
+    14 (QN/Block) 	Elapsed: 98.194	Loglikelihood: -2.85113e+08	(delta): 0.00298142
+    15 (QN/Block) 	Elapsed: 98.872	Loglikelihood: -2.85113e+08	(delta): 0.000638962
+    16 (QN/Block) 	Elapsed: 99.182	Loglikelihood: -2.85113e+08	(delta): 0.000317156
+    17 (QN/Block) 	Elapsed: 94.287	Loglikelihood: -2.85113e+08	(delta): 6.44922e-05
+    Converged in 17 iterations (1863.65 sec)
+    Loglikelihood: -285112886.053310
+    Output: /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/admixture_fold1.6.Q
+
+--- Fold 2: holdout = fold 2, training = folds [1, 3] ---
+    Training: 1,230 samples
+    Holdout:  615 samples
+    Running: admixture scrap/fold2.bed 6 --supervised -j6 -s 42
+    Convergence acceleration algorithm: QuasiNewton, 3 secant conditions
+    1 (EM) 	Elapsed: 36.822	Loglikelihood: -3.14231e+08	(delta): 5.07609e+08
+    2 (EM) 	Elapsed: 36.711	Loglikelihood: -3.05013e+08	(delta): 9.2184e+06
+    3 (EM) 	Elapsed: 38.156	Loglikelihood: -3.02521e+08	(delta): 2.4921e+06
+    4 (EM) 	Elapsed: 35.327	Loglikelihood: -3.0138e+08	(delta): 1.14117e+06
+    5 (EM) 	Elapsed: 35.275	Loglikelihood: -3.00689e+08	(delta): 690891
+    Initial loglikelihood: -3.00689e+08
+    1 (QN/Block) 	Elapsed: 98.274	Loglikelihood: -2.86475e+08	(delta): 1.42134e+07
+    2 (QN/Block) 	Elapsed: 98.227	Loglikelihood: -2.85604e+08	(delta): 871070
+    3 (QN/Block) 	Elapsed: 100.864	Loglikelihood: -2.8527e+08	(delta): 334067
+    4 (QN/Block) 	Elapsed: 101.269	Loglikelihood: -2.85153e+08	(delta): 117380
+    5 (QN/Block) 	Elapsed: 100.235	Loglikelihood: -2.85123e+08	(delta): 29631.1
+    6 (QN/Block) 	Elapsed: 99.732	Loglikelihood: -2.85113e+08	(delta): 9694.35
+    7 (QN/Block) 	Elapsed: 101.019	Loglikelihood: -2.85112e+08	(delta): 1262.18
+    8 (QN/Block) 	Elapsed: 99.275	Loglikelihood: -2.85112e+08	(delta): 87.3559
+    9 (QN/Block) 	Elapsed: 101.799	Loglikelihood: -2.85112e+08	(delta): 63.5937
+    10 (QN/Block) 	Elapsed: 105.409	Loglikelihood: -2.85112e+08	(delta): 20.7279
+    11 (QN/Block) 	Elapsed: 104.125	Loglikelihood: -2.85112e+08	(delta): 1.9928
+    12 (QN/Block) 	Elapsed: 99.711	Loglikelihood: -2.85112e+08	(delta): 0.0102713
+    13 (QN/Block) 	Elapsed: 99.98	Loglikelihood: -2.85112e+08	(delta): 0.00275254
+    14 (QN/Block) 	Elapsed: 103.13	Loglikelihood: -2.85112e+08	(delta): 0.000935733
+    15 (QN/Block) 	Elapsed: 103.246	Loglikelihood: -2.85112e+08	(delta): 3.89218e-05
+    Converged in 15 iterations (1713.01 sec)
+    Loglikelihood: -285112033.875916
+    Output: /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/admixture_fold2.6.Q
+
+--- Fold 3: holdout = fold 3, training = folds [1, 2] ---
+    Training: 1,233 samples
+    Holdout:  612 samples
+    Running: admixture scrap/fold3.bed 6 --supervised -j6 -s 42
+    Convergence acceleration algorithm: QuasiNewton, 3 secant conditions
+    1 (EM) 	Elapsed: 38.161	Loglikelihood: -3.14168e+08	(delta): 5.08548e+08
+    2 (EM) 	Elapsed: 37.828	Loglikelihood: -3.04955e+08	(delta): 9.21225e+06
+    3 (EM) 	Elapsed: 39.557	Loglikelihood: -3.02467e+08	(delta): 2.48844e+06
+    4 (EM) 	Elapsed: 39.188	Loglikelihood: -3.01329e+08	(delta): 1.13751e+06
+    5 (EM) 	Elapsed: 39.206	Loglikelihood: -3.00642e+08	(delta): 687535
+    Initial loglikelihood: -3.00642e+08
+    1 (QN/Block) 	Elapsed: 105.362	Loglikelihood: -2.86453e+08	(delta): 1.41889e+07
+    2 (QN/Block) 	Elapsed: 105.342	Loglikelihood: -2.85632e+08	(delta): 821159
+    3 (QN/Block) 	Elapsed: 108.842	Loglikelihood: -2.85387e+08	(delta): 244800
+    4 (QN/Block) 	Elapsed: 108.13	Loglikelihood: -2.85231e+08	(delta): 155795
+    5 (QN/Block) 	Elapsed: 107.709	Loglikelihood: -2.8514e+08	(delta): 90804.1
+    6 (QN/Block) 	Elapsed: 107.038	Loglikelihood: -2.8512e+08	(delta): 20517.4
+    7 (QN/Block) 	Elapsed: 107.054	Loglikelihood: -2.85115e+08	(delta): 5124.67
+    8 (QN/Block) 	Elapsed: 106.731	Loglikelihood: -2.85114e+08	(delta): 597.277
+    9 (QN/Block) 	Elapsed: 107.033	Loglikelihood: -2.85114e+08	(delta): 146.402
+    10 (QN/Block) 	Elapsed: 106.507	Loglikelihood: -2.85114e+08	(delta): 21.6005
+    11 (QN/Block) 	Elapsed: 106.895	Loglikelihood: -2.85114e+08	(delta): 1.8308
+    12 (QN/Block) 	Elapsed: 108.091	Loglikelihood: -2.85114e+08	(delta): 0.10859
+    13 (QN/Block) 	Elapsed: 105.614	Loglikelihood: -2.85114e+08	(delta): 0.00398988
+    14 (QN/Block) 	Elapsed: 105.911	Loglikelihood: -2.85114e+08	(delta): 0.00174171
+    15 (QN/Block) 	Elapsed: 106.155	Loglikelihood: -2.85114e+08	(delta): 0.000483692
+    16 (QN/Block) 	Elapsed: 107.121	Loglikelihood: -2.85114e+08	(delta): 2.50936e-05
+    Converged in 16 iterations (1919.64 sec)
+    Loglikelihood: -285113924.828780
+    Output: /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/admixture_fold3.6.Q
+
+============================================================
+Final run: all active supervised as reference
+============================================================
+    Running: admixture scrap/final.bed 6 --supervised -j6 -s 42
+    Convergence acceleration algorithm: QuasiNewton, 3 secant conditions
+    1 (EM) 	Elapsed: 34.176	Loglikelihood: -3.06072e+08	(delta): 5.57962e+08
+    2 (EM) 	Elapsed: 34.339	Loglikelihood: -2.98831e+08	(delta): 7.24095e+06
+    3 (EM) 	Elapsed: 33.765	Loglikelihood: -2.9714e+08	(delta): 1.6908e+06
+    4 (EM) 	Elapsed: 33.487	Loglikelihood: -2.96398e+08	(delta): 741564
+    5 (EM) 	Elapsed: 33.731	Loglikelihood: -2.95938e+08	(delta): 460296
+    Initial loglikelihood: -2.95938e+08
+    1 (QN/Block) 	Elapsed: 85.007	Loglikelihood: -2.85948e+08	(delta): 9.98987e+06
+    2 (QN/Block) 	Elapsed: 85.131	Loglikelihood: -2.85429e+08	(delta): 519541
+    3 (QN/Block) 	Elapsed: 87.947	Loglikelihood: -2.85228e+08	(delta): 200306
+    4 (QN/Block) 	Elapsed: 90.48	Loglikelihood: -2.85149e+08	(delta): 79633.2
+    5 (QN/Block) 	Elapsed: 90.179	Loglikelihood: -2.85133e+08	(delta): 15647.3
+    6 (QN/Block) 	Elapsed: 91.23	Loglikelihood: -2.85126e+08	(delta): 7050.99
+    7 (QN/Block) 	Elapsed: 89.018	Loglikelihood: -2.85124e+08	(delta): 1819.58
+    8 (QN/Block) 	Elapsed: 88.801	Loglikelihood: -2.85124e+08	(delta): 159.636
+    9 (QN/Block) 	Elapsed: 86.758	Loglikelihood: -2.85124e+08	(delta): 13.9232
+    10 (QN/Block) 	Elapsed: 87.337	Loglikelihood: -2.85124e+08	(delta): 3.6632
+    11 (QN/Block) 	Elapsed: 89.031	Loglikelihood: -2.85124e+08	(delta): 0.242607
+    12 (QN/Block) 	Elapsed: 85.49	Loglikelihood: -2.85124e+08	(delta): 0.00509161
+    13 (QN/Block) 	Elapsed: 87.248	Loglikelihood: -2.85124e+08	(delta): 0.00113565
+    14 (QN/Block) 	Elapsed: 86.64	Loglikelihood: -2.85124e+08	(delta): 7.06315e-05
+    Converged in 14 iterations (1414.67 sec)
+    Loglikelihood: -285124122.898211
+Output: /home/jesse/projects/sandboxes/ps-add-log/supervised_admixture/admixture_final.6.Q
+
+============================================================
+ADMIXTURE runs complete.
+============================================================
+
+============================================
+Step 13: Analyze ADMIXTURE results (K=6)
+============================================
+Loaded 27 population descriptions from /home/jesse/projects/sandboxes/ps-add-log/downloads/kg_population_names.tsv
+Detected ADMIXTURE column order: ['European', 'East Asian', 'American', 'African', 'South Asian', 'Oceanian']
+============================================================
+Building out-of-sample predictions
+============================================================
+  Fold 1: 618 holdout supervised samples
+  Fold 2: 615 holdout supervised samples
+  Fold 3: 612 holdout supervised samples
+  Total OOS predictions: 1,845
+
+============================================================
+Structure plots
+============================================================
+  Saved /home/jesse/projects/sandboxes/ps-add-log/summary/admixture-global-6/structure_holdout.png
+  Saved /home/jesse/projects/sandboxes/ps-add-log/summary/admixture-global-6/structure_projected.png
+
+============================================================
+Building metadata with ancestry fractions
+============================================================
+Wrote /home/jesse/projects/sandboxes/ps-add-log/summary/admixture-global-6/metadata_ancestry.csv
+  Total samples: 4,324
+  Supervised (OOS predictions): 1845
+  Projected (full-model predictions): 1817
+  Not in QC panel (no predictions): 662
+
+============================================================
+Formatting allele frequency file (.P)
+============================================================
+Wrote /home/jesse/projects/sandboxes/ps-add-log/summary/admixture-global-6/admixture_allele_freqs.tsv
+  135,020 SNPs x 6 populations
+  Population column order: ['European', 'East Asian', 'American', 'African', 'South Asian', 'Oceanian']
+
+============================================================
+Analysis complete.
+All outputs in /home/jesse/projects/sandboxes/ps-add-log/summary/admixture-global-6/
+============================================================
+
+============================================
+Pipeline steps 1-13 complete.
+Log saved to /home/jesse/projects/sandboxes/ps-add-log/logs/main_run_20260427_144413.log
+============================================
