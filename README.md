@@ -7,8 +7,8 @@ A fully reproducible bioinformatics pipeline for harmonizing, aligning, and perf
 Pull the pre-built image and run with defaults (K=6, MAF=1%):
 
 ```bash
-docker pull ghcr.io/jesseicr/public-statgen:latest
-docker run --rm -v $(pwd)/statgen-data:/app/pipeline-output ghcr.io/jesseicr/public-statgen:latest
+docker pull ghcr.io/human-genomics/public-statgen:latest
+docker run --rm -v $(pwd)/statgen-data:/app/pipeline-output ghcr.io/human-genomics/public-statgen:latest
 ```
 
 Override parameters with environment variables:
@@ -18,7 +18,7 @@ docker run --rm \
   -e K_MODEL=3 \
   -e MAF_ADMIXTURE=0.0200 \
   -v $(pwd)/statgen-data:/app/pipeline-output \
-  ghcr.io/jesseicr/public-statgen:latest
+  ghcr.io/human-genomics/public-statgen:latest
 ```
 
 | Variable | Description | Default |

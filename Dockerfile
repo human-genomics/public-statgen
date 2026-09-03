@@ -19,7 +19,7 @@
 
 FROM python:3.11-slim-bookworm
 
-LABEL org.opencontainers.image.source="https://github.com/jesseICR/public-statgen"
+LABEL org.opencontainers.image.source="https://github.com/human-genomics/public-statgen"
 LABEL org.opencontainers.image.description="Reproducible statistical genetics pipeline for ancestry estimation"
 LABEL org.opencontainers.image.licenses="MIT"
 
